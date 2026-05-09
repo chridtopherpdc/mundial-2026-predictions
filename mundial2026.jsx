@@ -1,23 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 
 const C = {
-  green: "#4CAF50",
-  greenLight: "#E8F5E9",
-  greenDark: "#2E7D32",
-  blue: "#29B6F6",
-  blueLight: "#E1F5FE",
-  blueDark: "#0277BD",
-  gray: "#607D8B",
-  grayLight: "#ECEFF1",
-  grayDark: "#37474F",
-  white: "#FFFFFF",
-  offWhite: "#F5F7F8",
-  textPrimary: "#1C2B33",
-  textSecondary: "#455A64",
-  textMuted: "#90A4AE",
-  border: "#CFD8DC",
-  borderLight: "#ECEFF1",
+  green:"#4CAF50", greenL:"#E8F5E9", greenD:"#2E7D32",
+  blue:"#29B6F6",  blueL:"#E1F5FE",  blueD:"#0277BD",
+  gray:"#607D8B",  grayL:"#ECEFF1",  grayD:"#37474F",
+  white:"#FFFFFF", bg:"#F5F7F8",
+  text:"#1C2B33",  textS:"#455A64",  textM:"#90A4AE",
+  border:"#CFD8DC", borderL:"#ECEFF1",
 };
+
+const bg4 = c => c===C.green?C.greenL:c===C.blue?C.blueL:C.grayL;
 
 const GROUPS = {
   A:{teams:["México","Ecuador","Croacia","Marruecos"],color:C.green},
@@ -100,9 +92,10 @@ const PLAYERS_BY_TEAM = {
   "Panamá":["Rolando Blackburn","Roderick Miller","Anibal Godoy","Fidel Escobar","Abdiel Arroyo","Édgar Bárcenas","José Fajardo","Adalberto Carrasquilla","Alberto Quintero","Valentín Pimentel","Harold Cummings"],
 };
 
-const ALL_PLAYERS = Object.entries(PLAYERS_BY_TEAM).flatMap(([team,players]) => players.map(p => ({name:p,team,flag:FLAGS[team]||"🏳️"})));
-const ALL_TEAMS = Object.values(GROUPS).flatMap(g => g.teams);
+const ALL_PLAYERS = Object.entries(PLAYERS_BY_TEAM).flatMap(([team,players])=>players.map(p=>({name:p,team,flag:FLAGS[team]||"🏳️"})));
+const ALL_TEAMS = Object.values(GROUPS).flatMap(g=>g.teams);
 
+// All 72 group matches
 const MATCHES = [
   {id:1,group:"A",home:"México",away:"Marruecos",date:"11 Jun",time:"18:00",venue:"SoFi Stadium, LA"},
   {id:2,group:"A",home:"Croacia",away:"Ecuador",date:"11 Jun",time:"21:00",venue:"MetLife, NY"},
@@ -178,20 +171,40 @@ const MATCHES = [
   {id:72,group:"L",home:"Bosnia",away:"República Checa",date:"28 Jun",time:"18:00",venue:"Rose Bowl, LA"},
 ];
 
-const SK="wc2026_v5", UK="wc2026_usr_v5";
-const loadData = () => { try { return JSON.parse(localStorage.getItem(SK)||"{}") } catch { return {} } };
-const saveData = d => { try { localStorage.setItem(SK, JSON.stringify(d)) } catch {} };
-const loadUser = () => { try { const u = JSON.parse(localStorage.getItem(UK)||"null"); return u||{name:"",favTeam:"",favPlayer:"",id:Math.random().toString(36).slice(2)} } catch { return {name:"",favTeam:"",favPlayer:"",id:"u1"} } };
-const saveUser = u => { try { localStorage.setItem(UK, JSON.stringify(u)) } catch {} };
-
-function Divider() {
-  return <div style={{height:4, background:`linear-gradient(90deg,${C.green},${C.blue},${C.gray})`, borderRadius:2, marginBottom:16}}/>;
+// Calculate standings from match results
+function calcStandings(groupLetter, matchResults) {
+  const teams = GROUPS[groupLetter].teams;
+  const stats = {};
+  teams.forEach(t => { stats[t]={pj:0,g:0,e:0,p:0,gf:0,gc:0,pts:0} });
+  MATCHES.filter(m=>m.group===groupLetter).forEach(m=>{
+    const r = matchResults[m.id];
+    if(!r||r.home===""||r.away==="") return;
+    const h=Number(r.home), a=Number(r.away);
+    if(isNaN(h)||isNaN(a)) return;
+    stats[m.home].pj++; stats[m.away].pj++;
+    stats[m.home].gf+=h; stats[m.home].gc+=a;
+    stats[m.away].gf+=a; stats[m.away].gc+=h;
+    if(h>a){stats[m.home].g++;stats[m.home].pts+=3;stats[m.away].p++;}
+    else if(h<a){stats[m.away].g++;stats[m.away].pts+=3;stats[m.home].p++;}
+    else{stats[m.home].e++;stats[m.home].pts+=1;stats[m.away].e++;stats[m.away].pts+=1;}
+  });
+  return teams.map(t=>({team:t,...stats[t],dif:stats[t].gf-stats[t].gc}))
+    .sort((a,b)=>b.pts-a.pts||b.dif-a.dif||b.gf-a.gf);
 }
 
-function TrophySVG({size=60}) {
-  return (
+const SK="wc2026_v6", UK="wc2026_usr_v6";
+const loadData = ()=>{try{return JSON.parse(localStorage.getItem(SK)||"{}")}catch{return{}}};
+const saveData = d=>{try{localStorage.setItem(SK,JSON.stringify(d))}catch{}};
+const loadUser = ()=>{try{const u=JSON.parse(localStorage.getItem(UK)||"null");return u||{name:"",favTeam:"",favPlayer:"",id:Math.random().toString(36).slice(2)}}catch{return{name:"",favTeam:"",favPlayer:"",id:"u1"}}};
+const saveUser = u=>{try{localStorage.setItem(UK,JSON.stringify(u))}catch{}};
+
+function GradBar(){return <div style={{height:4,background:`linear-gradient(90deg,${C.green},${C.blue},${C.gray},${C.green},${C.blue})`}}/>}
+function Div(){return <div style={{height:4,background:`linear-gradient(90deg,${C.green},${C.blue})`,borderRadius:2,marginBottom:16}}/>}
+
+function TrophySVG({size=60}){
+  return(
     <svg width={size} height={size*1.2} viewBox="0 0 80 96" fill="none">
-      <ellipse cx="40" cy="90" rx="20" ry="5" fill={C.grayLight}/>
+      <ellipse cx="40" cy="90" rx="20" ry="5" fill={C.grayL}/>
       <rect x="31" y="75" width="18" height="10" rx="2" fill="#C8A04A"/>
       <rect x="25" y="71" width="30" height="6" rx="3" fill="#A07830"/>
       <path d="M22 16 Q11 20 13 36 Q15 50 27 56 L31 60 L49 60 L53 56 Q65 50 67 36 Q69 20 58 16 Z" fill="#D4A017"/>
@@ -205,29 +218,25 @@ function TrophySVG({size=60}) {
   );
 }
 
-export default function App() {
-  const [tab, setTab] = useState("home");
-  const [user, setUser] = useState(loadUser);
-  const [data, setData] = useState(loadData);
-  const [showSetup, setShowSetup] = useState(false);
-  const [toast, setToast] = useState(null);
-
-  useEffect(() => { saveData(data) }, [data]);
-  useEffect(() => { saveUser(user) }, [user]);
-  useEffect(() => { if (!user.name) setShowSetup(true) }, []);
-
-  const showToast = msg => { setToast(msg); setTimeout(() => setToast(null), 2500) };
-  const updatePred = (key, val) => { setData(d => ({...d, predictions:{...(d.predictions||{}), [key]:val}})); showToast("✅ ¡Guardado!") };
-
-  const TABS = [
-    {id:"home", icon:"🏠", label:"INICIO"},
-    {id:"calendar", icon:"📅", label:"PARTIDOS"},
-    {id:"groups", icon:"🗂", label:"GRUPOS"},
-    {id:"bracket", icon:"🏅", label:"BRACKET"},
-    {id:"ranking", icon:"👥", label:"RANKING"},
+export default function App(){
+  const [tab,setTab]=useState("home");
+  const [user,setUser]=useState(loadUser);
+  const [data,setData]=useState(loadData);
+  const [showSetup,setShowSetup]=useState(false);
+  const [toast,setToast]=useState(null);
+  useEffect(()=>{saveData(data)},[data]);
+  useEffect(()=>{saveUser(user)},[user]);
+  useEffect(()=>{if(!user.name)setShowSetup(true)},[]);
+  const showToast=msg=>{setToast(msg);setTimeout(()=>setToast(null),2500)};
+  const updatePred=(key,val)=>{setData(d=>({...d,predictions:{...(d.predictions||{}),[key]:val}}));showToast("✅ ¡Guardado!")};
+  const TABS=[
+    {id:"HOME",icon:"🏠",label:"INICIO"},
+    {id:"CALENDAR",icon:"📅",label:"PARTIDOS"},
+    {id:"GROUPS",icon:"🗂",label:"GRUPOS"},
+    {id:"BRACKET",icon:"🏅",label:"BRACKET"},
+    {id:"RANKING",icon:"👥",label:"RANKING"},
   ];
-
-  return (
+  return(
     <div style={S.app}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap');
@@ -247,13 +256,12 @@ export default function App() {
         .champ{animation:champPulse 2.5s ease infinite}
         input:focus{outline:2px solid ${C.blue}!important;border-color:${C.blue}!important}
         input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+        table{border-collapse:collapse;width:100%}
       `}</style>
-
-      {showSetup && <SetupModal user={user} setUser={u=>{setUser(u);saveUser(u)}} onClose={()=>setShowSetup(false)}/>}
-      {toast && <div style={S.toast}>{toast}</div>}
-
+      {showSetup&&<SetupModal user={user} setUser={u=>{setUser(u);saveUser(u)}} onClose={()=>setShowSetup(false)}/>}
+      {toast&&<div style={S.toast}>{toast}</div>}
       <header style={S.header}>
-        <div style={{height:5,background:`linear-gradient(90deg,${C.green},${C.blue},${C.gray},${C.green},${C.blue})`}}/>
+        <GradBar/>
         <div style={S.hRow}>
           <div style={{display:"flex",alignItems:"center",gap:14}}>
             <TrophySVG size={50}/>
@@ -265,24 +273,20 @@ export default function App() {
           <button style={S.pill} onClick={()=>setShowSetup(true)}>
             <span style={{fontSize:22}}>{FLAGS[user.favTeam]||"👤"}</span>
             <div>
-              <div style={{fontSize:12,fontWeight:700,color:C.textPrimary,lineHeight:1.2,fontFamily:"'Barlow Condensed',sans-serif"}}>{user.name||"Mi perfil"}</div>
+              <div style={{fontSize:12,fontWeight:700,color:C.text,lineHeight:1.2,fontFamily:"'Barlow Condensed',sans-serif"}}>{user.name||"Mi perfil"}</div>
               {user.favTeam&&<div style={{fontSize:10,color:C.blue,fontWeight:600}}>{user.favTeam}</div>}
             </div>
           </button>
         </div>
       </header>
-
       <nav style={S.nav}>
         {TABS.map(t=>(
-          <button key={t.id} className="nb"
-            style={{...S.navTab,...(tab===t.id?{color:C.green,borderBottomColor:C.green,background:C.greenLight}:{})}}
-            onClick={()=>setTab(t.id)}>
+          <button key={t.id} className="nb" style={{...S.navTab,...(tab===t.id?{color:C.green,borderBottomColor:C.green,background:C.greenL}:{})}} onClick={()=>setTab(t.id)}>
             <span style={{fontSize:16}}>{t.icon}</span>
             <span style={{fontSize:9,fontWeight:900,letterSpacing:.8}}>{t.label}</span>
           </button>
         ))}
       </nav>
-
       <main style={S.main} className="fi" key={tab}>
         {tab==="home"&&<HomeTab preds={data.predictions||{}} updatePred={updatePred} user={user}/>}
         {tab==="calendar"&&<CalendarTab data={data} setData={setData} showToast={showToast}/>}
@@ -294,7 +298,7 @@ export default function App() {
   );
 }
 
-function SetupModal({user,setUser,onClose}) {
+function SetupModal({user,setUser,onClose}){
   const [name,setName]=useState(user.name||"");
   const [team,setTeam]=useState(user.favTeam||"");
   const [player,setPlayer]=useState(user.favPlayer||"");
@@ -314,22 +318,22 @@ function SetupModal({user,setUser,onClose}) {
   return(
     <div style={S.modalBg}>
       <div style={S.modal}>
-        <div style={{height:5,background:`linear-gradient(90deg,${C.green},${C.blue},${C.gray})`}}/>
+        <GradBar/>
         <div style={{padding:"28px 24px"}}>
           <div style={{display:"flex",justifyContent:"center",marginBottom:16}}><TrophySVG size={80}/></div>
-          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:30,fontWeight:900,textAlign:"center",color:C.textPrimary,letterSpacing:2,marginBottom:2}}>MUNDIAL 2026</div>
-          <div style={{fontSize:11,color:C.textMuted,textAlign:"center",marginBottom:24,letterSpacing:1}}>APP DE PREDICCIONES · WE ARE 26</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:30,fontWeight:900,textAlign:"center",color:C.text,letterSpacing:2,marginBottom:2}}>MUNDIAL 2026</div>
+          <div style={{fontSize:11,color:C.textM,textAlign:"center",marginBottom:24,letterSpacing:1}}>APP DE PREDICCIONES · WE ARE 26</div>
           <Lbl>TU NOMBRE</Lbl>
           <input style={S.inp} placeholder="¿Cómo te llaman?" value={name} onChange={e=>setName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&save()}/>
           <Lbl mt>TU EQUIPO FAVORITO</Lbl>
           <div style={{position:"relative"}} ref={tRef}>
             <input style={S.inp} placeholder="Busca tu equipo..." value={team||tq} onChange={e=>{setTq(e.target.value);setTeam("");setTOpen(true)}} onFocus={()=>setTOpen(true)}/>
-            {tOpen&&<div style={S.drop}>{fT.slice(0,8).map((t,i)=><div key={i} className="dr" style={S.dRow} onClick={()=>{setTeam(t);setTq("");setTOpen(false)}}><span style={{fontSize:20}}>{FLAGS[t]||"🏳️"}</span><span style={{fontSize:13,fontWeight:600,color:C.textPrimary}}>{t}</span></div>)}</div>}
+            {tOpen&&<div style={S.drop}>{fT.slice(0,8).map((t,i)=><div key={i} className="dr" style={S.dRow} onClick={()=>{setTeam(t);setTq("");setTOpen(false)}}><span style={{fontSize:20}}>{FLAGS[t]||"🏳️"}</span><span style={{fontSize:13,fontWeight:600,color:C.text}}>{t}</span></div>)}</div>}
           </div>
           <Lbl mt>TU JUGADOR FAVORITO</Lbl>
           <div style={{position:"relative"}} ref={pRef}>
             <input style={S.inp} placeholder="Busca tu jugador..." value={player||pq} onChange={e=>{setPq(e.target.value);setPlayer("");setPOpen(true)}} onFocus={()=>setPOpen(true)}/>
-            {pOpen&&<div style={S.drop}>{fP.slice(0,8).map((p,i)=><div key={i} className="dr" style={S.dRow} onClick={()=>{setPlayer(p.name);setPq("");setPOpen(false)}}><span style={{fontSize:20}}>{p.flag}</span><div><div style={{fontSize:13,fontWeight:600,color:C.textPrimary}}>{p.name}</div><div style={{fontSize:10,color:C.textMuted}}>{p.team}</div></div></div>)}</div>}
+            {pOpen&&<div style={S.drop}>{fP.slice(0,8).map((p,i)=><div key={i} className="dr" style={S.dRow} onClick={()=>{setPlayer(p.name);setPq("");setPOpen(false)}}><span style={{fontSize:20}}>{p.flag}</span><div><div style={{fontSize:13,fontWeight:600,color:C.text}}>{p.name}</div><div style={{fontSize:10,color:C.textM}}>{p.team}</div></div></div>)}</div>}
           </div>
           <button style={{...S.btnMain,marginTop:22}} onClick={save}>¡EMPEZAR A PREDECIR! →</button>
         </div>
@@ -338,20 +342,18 @@ function SetupModal({user,setUser,onClose}) {
   );
 }
 
-function Lbl({children,mt}){return <div style={{fontSize:10,color:C.textMuted,fontWeight:700,letterSpacing:1.5,marginBottom:6,marginTop:mt?14:0}}>{children}</div>}
+function Lbl({children,mt}){return <div style={{fontSize:10,color:C.textM,fontWeight:700,letterSpacing:1.5,marginBottom:6,marginTop:mt?14:0}}>{children}</div>}
 
 const PRED_CATS=[
-  {key:"champion",label:"Campeón Mundial",icon:"🏆",type:"team",color:C.green},
-  {key:"surprise_team",label:"Equipo Sorpresa",icon:"⚡",type:"team",color:C.blue},
-  {key:"surprise_player",label:"Jugador Sorpresa",icon:"🌟",type:"player",color:C.blue},
-  {key:"disappointment_player",label:"Jugador Decepción",icon:"😞",type:"player",color:C.gray},
-  {key:"disappointment_team",label:"Equipo Decepción",icon:"💔",type:"team",color:C.gray},
-  {key:"top_scorer",label:"Goleador del Torneo",icon:"⚽",type:"player",color:C.green},
-  {key:"top_assist",label:"Asistidor del Torneo",icon:"🎯",type:"player",color:C.blue},
-  {key:"best_keeper",label:"Portero del Torneo",icon:"🧤",type:"player",color:C.green},
+  {key:"champion",label:"CAMPEON MUNDIAL",icon:"🏆",type:"team",color:C.green},
+  {key:"surprise_team",label:"EQUIPO SORPRESA",icon:"⚡",type:"team",color:C.blue},
+  {key:"surprise_player",label:"JUGADOR SORPRESA",icon:"🌟",type:"player",color:C.blue},
+  {key:"disappointment_player",label:"JUGADOR DECEPCION",icon:"😞",type:"player",color:C.gray},
+  {key:"disappointment_team",label:"EQUIPO DECEPCION",icon:"💔",type:"team",color:C.gray},
+  {key:"top_scorer",label:"TOP GOLEADOR",icon:"⚽",type:"player",color:C.green},
+  {key:"top_assist",label:"TOP ASISTIDOR",icon:"🎯",type:"player",color:C.blue},
+  {key:"best_keeper",label:"PORTERO DEL MUNDIAL",icon:"🧤",type:"player",color:C.green},
 ];
-
-function bgFor(color){return color===C.green?C.greenLight:color===C.blue?C.blueLight:C.grayLight}
 
 function HomeTab({preds,updatePred,user}){
   const filled=PRED_CATS.filter(c=>preds[c.key]).length;
@@ -360,22 +362,22 @@ function HomeTab({preds,updatePred,user}){
   return(
     <div>
       <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:16,overflow:"hidden",marginBottom:16,boxShadow:"0 2px 10px rgba(0,0,0,.06)"}}>
-        <div style={{background:`linear-gradient(135deg,${C.greenLight},${C.blueLight})`,padding:"28px 24px",display:"flex",alignItems:"center",gap:20,flexWrap:"wrap"}}>
+        <div style={{background:`linear-gradient(135deg,${C.greenL},${C.blueL})`,padding:"28px 24px",display:"flex",alignItems:"center",gap:20,flexWrap:"wrap"}}>
           <TrophySVG size={88}/>
           <div style={{flex:1,minWidth:180}}>
             <div style={{fontSize:9,letterSpacing:4,color:C.gray,fontFamily:"'Barlow Condensed',sans-serif",fontWeight:700,marginBottom:4}}>FIFA WORLD CUP 2026™</div>
-            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:46,fontWeight:900,color:C.textPrimary,letterSpacing:2,lineHeight:.95,marginBottom:8}}>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:46,fontWeight:900,color:C.text,letterSpacing:2,lineHeight:.95,marginBottom:8}}>
               {user.name?<><span style={{color:C.gray}}>HOLA,</span><br/><span style={{color:C.green}}>{user.name.toUpperCase()}</span></>:<span style={{color:C.green}}>MIS PREDICCIONES</span>}
             </div>
-            {user.favTeam&&<div style={{fontSize:13,color:C.textSecondary}}>{favFlag} {user.favTeam}{user.favPlayer?` · ⭐ ${user.favPlayer}`:""}</div>}
+            {user.favTeam&&<div style={{fontSize:13,color:C.textS}}>{favFlag} {user.favTeam}{user.favPlayer?` · ⭐ ${user.favPlayer}`:""}</div>}
           </div>
         </div>
         <div style={{padding:"14px 24px",borderTop:`1px solid ${C.border}`}}>
-          <div style={{display:"flex",justifyContent:"space-between",fontSize:12,color:C.textSecondary,marginBottom:7}}>
+          <div style={{display:"flex",justifyContent:"space-between",fontSize:12,color:C.textS,marginBottom:7}}>
             <span>{filled}/{PRED_CATS.length} categorías completadas</span>
             <span style={{fontWeight:700,color:C.green,fontFamily:"'Barlow Condensed',sans-serif",fontSize:16}}>{pct}%</span>
           </div>
-          <div style={{background:C.grayLight,borderRadius:999,height:8,overflow:"hidden"}}>
+          <div style={{background:C.grayL,borderRadius:999,height:8,overflow:"hidden"}}>
             <div style={{width:`${pct}%`,height:"100%",background:`linear-gradient(90deg,${C.green},${C.blue})`,borderRadius:999,transition:"width .6s"}}/>
           </div>
         </div>
@@ -401,15 +403,15 @@ function PredCard({cat,value,onSave}){
   return(
     <div className="hvr" ref={ref} style={{background:C.white,border:`1px solid ${C.border}`,borderLeft:`4px solid ${cat.color}`,borderRadius:12,padding:16,boxShadow:"0 1px 5px rgba(0,0,0,.05)"}}>
       <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
-        <div style={{width:36,height:36,borderRadius:9,background:bgFor(cat.color),border:`1px solid ${cat.color}44`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>{cat.icon}</div>
-        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:700,color:C.textPrimary,letterSpacing:.3}}>{cat.label}</span>
+        <div style={{width:36,height:36,borderRadius:9,background:bg4(cat.color),border:`1px solid ${cat.color}44`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>{cat.icon}</div>
+        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:700,color:C.text,letterSpacing:.3}}>{cat.label}</span>
       </div>
       {value&&(
-        <div style={{background:bgFor(cat.color),border:`1px solid ${cat.color}44`,borderRadius:9,padding:"9px 12px",display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
+        <div style={{background:bg4(cat.color),border:`1px solid ${cat.color}44`,borderRadius:9,padding:"9px 12px",display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
           <span style={{fontSize:24}}>{getFlag(value)}</span>
           <div style={{flex:1}}>
-            <div style={{fontSize:13,fontWeight:700,color:C.textPrimary}}>{getName(value)}</div>
-            {cat.type==="player"&&typeof value==="object"&&<div style={{fontSize:10,color:C.textMuted}}>{value.team}</div>}
+            <div style={{fontSize:13,fontWeight:700,color:C.text}}>{getName(value)}</div>
+            {cat.type==="player"&&typeof value==="object"&&<div style={{fontSize:10,color:C.textM}}>{value.team}</div>}
           </div>
           <div style={{width:8,height:8,borderRadius:"50%",background:cat.color}}/>
         </div>
@@ -424,8 +426,8 @@ function PredCard({cat,value,onSave}){
                 <div key={i} className="dr" style={S.dRow} onClick={()=>{onSave(isT?item:item);setQ("");setOpen(false)}}>
                   <span style={{fontSize:20,flexShrink:0}}>{isT?(FLAGS[item]||"🏳️"):item.flag}</span>
                   <div>
-                    <div style={{fontSize:13,fontWeight:600,color:C.textPrimary}}>{isT?item:item.name}</div>
-                    {!isT&&<div style={{fontSize:10,color:C.textMuted}}>{item.team}</div>}
+                    <div style={{fontSize:13,fontWeight:600,color:C.text}}>{isT?item:item.name}</div>
+                    {!isT&&<div style={{fontSize:10,color:C.textM}}>{item.team}</div>}
                   </div>
                 </div>
               );
@@ -437,12 +439,16 @@ function PredCard({cat,value,onSave}){
   );
 }
 
+// ─── CALENDAR TAB ───────────────────────────────────────────────────────────
 function CalendarTab({data,setData,showToast}){
   const [filter,setFilter]=useState("all");
   const res=data.matchResults||{};
   const grps=[...new Set(MATCHES.map(m=>m.group))];
   const shown=filter==="all"?MATCHES:MATCHES.filter(m=>m.group===filter);
-  const setR=(id,h,a)=>{setData(d=>({...d,matchResults:{...(d.matchResults||{}),[id]:{home:h,away:a}}}));showToast("⚽ ¡Predicción guardada!")};
+  const setR=(id,h,a)=>{
+    setData(d=>({...d,matchResults:{...(d.matchResults||{}),[id]:{home:h,away:a}}}));
+    showToast("⚽ ¡Resultado guardado!");
+  };
   const share=()=>{
     const lines=MATCHES.filter(m=>res[m.id]).slice(0,12).map(m=>`${FLAGS[m.home]}${m.home} ${res[m.id].home}-${res[m.id].away} ${m.away}${FLAGS[m.away]}`).join("\n");
     navigator.clipboard?.writeText("🏆 Mis picks #Mundial2026:\n\n"+lines+"\n\n"+window.location.href);
@@ -450,8 +456,20 @@ function CalendarTab({data,setData,showToast}){
   };
   return(
     <div>
-      <PH title="Calendario de Partidos" sub={`${Object.keys(res).length} de ${MATCHES.length} predichos`}><button style={S.btnG} onClick={share}>📤 Compartir</button></PH>
-      <Divider/>
+      <PH title="Calendario de Partidos" sub={`${Object.keys(res).length} de ${MATCHES.length} predichos · Los puntos se calculan automáticamente`}>
+        <button style={S.btnG} onClick={share}>📤 Compartir</button>
+      </PH>
+      <Div/>
+      {/* Points legend */}
+      <div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap"}}>
+        {[{l:"Victoria",pts:"3 pts",c:C.green},{l:"Empate",pts:"1 pt",c:C.blue},{l:"Derrota",pts:"0 pts",c:C.gray}].map(x=>(
+          <div key={x.l} style={{display:"flex",alignItems:"center",gap:5,background:C.white,border:`1px solid ${C.border}`,borderRadius:7,padding:"4px 10px",fontSize:11}}>
+            <div style={{width:8,height:8,borderRadius:"50%",background:x.c}}/>
+            <span style={{color:C.textS}}>{x.l}</span>
+            <span style={{fontWeight:700,color:x.c,fontFamily:"'Barlow Condensed',sans-serif",fontSize:13}}>{x.pts}</span>
+          </div>
+        ))}
+      </div>
       <div style={{display:"flex",gap:6,marginBottom:14,flexWrap:"wrap"}}>
         {["all",...grps].map(g=>(
           <button key={g} style={{...S.fBtn,...(filter===g?{background:C.green,borderColor:C.green,color:"#fff"}:{})}} onClick={()=>setFilter(g)}>{g==="all"?"Todos":`Gr. ${g}`}</button>
@@ -466,18 +484,21 @@ function MatchCard({match,result,onSave}){
   const [h,setH]=useState(result?.home??"");
   const [a,setA]=useState(result?.away??"");
   const gc=GROUPS[match.group]?.color||C.blue;
-  const saved=result!==undefined;
+  const saved=result!==undefined&&result.home!=="";
   return(
     <div className="hvr" style={{background:C.white,border:`1px solid ${C.border}`,borderLeft:`4px solid ${gc}`,borderRadius:12,padding:14,marginBottom:8,boxShadow:"0 1px 4px rgba(0,0,0,.04)"}}>
       <div style={{display:"flex",gap:8,marginBottom:10,flexWrap:"wrap",alignItems:"center"}}>
-        <span style={{fontSize:10,fontWeight:700,padding:"3px 9px",borderRadius:99,background:bgFor(gc),color:gc,border:`1px solid ${gc}55`,letterSpacing:.5}}>GRUPO {match.group}</span>
-        <span style={{fontSize:11,color:C.textMuted}}>📅 {match.date} · {match.time}</span>
-        <span style={{fontSize:10,color:C.textMuted}}>📍 {match.venue}</span>
+        <span style={{fontSize:10,fontWeight:700,padding:"3px 9px",borderRadius:99,background:bg4(gc),color:gc,border:`1px solid ${gc}55`,letterSpacing:.5}}>GRUPO {match.group}</span>
+        <span style={{fontSize:11,color:C.textM}}>📅 {match.date} · {match.time}</span>
+        <span style={{fontSize:10,color:C.textM}}>📍 {match.venue}</span>
+        {saved&&(
+          <span style={{marginLeft:"auto",fontSize:10,padding:"2px 8px",borderRadius:99,background:C.greenL,color:C.greenD,fontWeight:700}}>✓ guardado</span>
+        )}
       </div>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}>
         <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
           <span style={{fontSize:32}}>{FLAGS[match.home]||"🏳️"}</span>
-          <span style={{fontSize:11,fontWeight:600,color:C.textSecondary,textAlign:"center"}}>{match.home}</span>
+          <span style={{fontSize:11,fontWeight:600,color:C.textS,textAlign:"center"}}>{match.home}</span>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
           <input type="number" min={0} max={20} style={{...S.sInp,borderColor:saved?gc:C.border}} value={h} onChange={e=>setH(e.target.value)} placeholder="0"/>
@@ -486,129 +507,205 @@ function MatchCard({match,result,onSave}){
         </div>
         <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
           <span style={{fontSize:32}}>{FLAGS[match.away]||"🏳️"}</span>
-          <span style={{fontSize:11,fontWeight:600,color:C.textSecondary,textAlign:"center"}}>{match.away}</span>
+          <span style={{fontSize:11,fontWeight:600,color:C.textS,textAlign:"center"}}>{match.away}</span>
         </div>
       </div>
       <button style={{marginTop:10,width:"100%",border:"none",borderRadius:9,padding:"10px",color:"#fff",fontWeight:700,cursor:"pointer",fontSize:12,fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:.5,background:saved?gc:`linear-gradient(135deg,${C.green},${C.blue})`,transition:"opacity .2s"}}
         onClick={()=>onSave(Number(h),Number(a))}>
-        {saved?`✓ ${match.home} ${h}–${a} ${match.away} · GUARDADO`:"GUARDAR PREDICCIÓN"}
+        {saved?`✓ ${match.home} ${h}–${a} ${match.away}`:"GUARDAR RESULTADO"}
       </button>
     </div>
   );
 }
 
+// ─── GROUPS TAB ─────────────────────────────────────────────────────────────
 function GroupsTab({data,setData}){
-  const st=data.groupStandings||{};
-  const setGO=(g,o)=>setData(d=>({...d,groupStandings:{...(d.groupStandings||{}),[g]:o}}));
+  const res=data.matchResults||{};
   return(
     <div>
-      <PH title="Fase de Grupos" sub="Ordena con ▲▼ según tu predicción"/>
-      <Divider/>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(228px,1fr))",gap:12}}>
-        {Object.entries(GROUPS).map(([l,{teams,color}])=>(
-          <GroupTable key={l} letter={l} color={color} order={st[l]||teams} onReorder={o=>setGO(l,o)}/>
+      <PH title="Fase de Grupos" sub="Clasificación automática por puntos según tus resultados predichos"/>
+      <Div/>
+      <div style={{background:C.blueL,border:`1px solid ${C.blue}44`,borderRadius:10,padding:"10px 14px",marginBottom:14,fontSize:12,color:C.blueD}}>
+        💡 Los puntos se calculan automáticamente. Ve a <strong>PARTIDOS</strong> y guarda tus resultados predichos para ver la tabla actualizada.
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:14}}>
+        {Object.entries(GROUPS).map(([letter,{color}])=>(
+          <GroupStandingsTable key={letter} letter={letter} color={color} matchResults={res}/>
         ))}
       </div>
     </div>
   );
 }
 
-function GroupTable({letter,color,order,onReorder}){
-  const move=(i,d)=>{const j=i+d;if(j<0||j>=order.length)return;const a=[...order];[a[i],a[j]]=[a[j],a[i]];onReorder(a)};
+function GroupStandingsTable({letter,color,matchResults}){
+  const standings=calcStandings(letter,matchResults);
   const medals=["🥇","🥈","🥉","4️⃣"];
+  const pos_colors=["#2E7D32","#1565C0","#607D8B","#607D8B"];
   return(
-    <div className="hvr" style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:12,padding:14,borderTop:`4px solid ${color}`,boxShadow:"0 1px 5px rgba(0,0,0,.05)"}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10,paddingBottom:8,borderBottom:`1px solid ${C.borderLight}`}}>
-        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:20,fontWeight:900,color:color,letterSpacing:1}}>GRUPO {letter}</span>
-        <span style={{fontSize:10,color:C.textMuted}}>4 equipos</span>
+    <div className="hvr" style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:12,overflow:"hidden",boxShadow:"0 1px 5px rgba(0,0,0,.05)"}}>
+      <div style={{background:color,padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,fontWeight:900,color:"#fff",letterSpacing:1}}>GRUPO {letter}</span>
+        <span style={{fontSize:10,color:"rgba(255,255,255,.7)",letterSpacing:.5}}>Top 2 clasifican · Mejor 3° también</span>
       </div>
-      {order.map((team,i)=>(
-        <div key={team} style={{display:"flex",alignItems:"center",gap:8,padding:"6px 4px",marginBottom:3,borderRadius:7,background:i<2?bgFor(color):"transparent",borderBottom:`1px solid ${C.borderLight}`,transition:"background .15s"}}>
-          <span style={{fontSize:15,width:22,flexShrink:0}}>{medals[i]}</span>
-          <span style={{fontSize:19}}>{FLAGS[team]||"🏳️"}</span>
-          <span style={{flex:1,fontSize:12,fontWeight:600,color:i<2?C.textPrimary:C.textMuted}}>{team}</span>
-          <div style={{display:"flex",flexDirection:"column",gap:2}}>
-            <button className="arr" style={{background:C.grayLight,border:`1px solid ${C.border}`,color:C.textMuted,cursor:"pointer",fontSize:9,padding:"2px 6px",borderRadius:4,lineHeight:1,transition:"all .15s"}} onClick={()=>move(i,-1)}>▲</button>
-            <button className="arr" style={{background:C.grayLight,border:`1px solid ${C.border}`,color:C.textMuted,cursor:"pointer",fontSize:9,padding:"2px 6px",borderRadius:4,lineHeight:1,transition:"all .15s"}} onClick={()=>move(i,1)}>▼</button>
-          </div>
-        </div>
-      ))}
-      <div style={{marginTop:8,fontSize:10,color:C.textMuted,textAlign:"center"}}>Top 2 avanzan automáticamente ✓</div>
+      <table style={{fontSize:11}}>
+        <thead>
+          <tr style={{background:C.bg}}>
+            <th style={{padding:"6px 10px",textAlign:"left",color:C.textM,fontWeight:700,letterSpacing:.5,width:24}}>#</th>
+            <th style={{padding:"6px 4px",textAlign:"left",color:C.textM,fontWeight:700,letterSpacing:.5}}>EQUIPO</th>
+            <th style={{padding:"6px 6px",textAlign:"center",color:C.textM,fontWeight:700,width:26}}>PJ</th>
+            <th style={{padding:"6px 6px",textAlign:"center",color:C.textM,fontWeight:700,width:26}}>G</th>
+            <th style={{padding:"6px 6px",textAlign:"center",color:C.textM,fontWeight:700,width:26}}>E</th>
+            <th style={{padding:"6px 6px",textAlign:"center",color:C.textM,fontWeight:700,width:26}}>P</th>
+            <th style={{padding:"6px 6px",textAlign:"center",color:C.textM,fontWeight:700,width:32}}>DIF</th>
+            <th style={{padding:"6px 8px",textAlign:"center",color:C.textM,fontWeight:700,width:34}}>PTS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {standings.map((row,i)=>(
+            <tr key={row.team} style={{background:i<2?bg4(color):"transparent",borderBottom:`1px solid ${C.borderL}`}}>
+              <td style={{padding:"7px 10px",textAlign:"center"}}>
+                <span style={{fontSize:14}}>{medals[i]}</span>
+              </td>
+              <td style={{padding:"7px 4px"}}>
+                <div style={{display:"flex",alignItems:"center",gap:6}}>
+                  <span style={{fontSize:17}}>{FLAGS[row.team]||"🏳️"}</span>
+                  <span style={{fontSize:11,fontWeight:i<2?700:400,color:i<2?C.text:C.textS}}>{row.team}</span>
+                </div>
+              </td>
+              <td style={{padding:"7px 6px",textAlign:"center",color:C.textS}}>{row.pj}</td>
+              <td style={{padding:"7px 6px",textAlign:"center",color:C.green,fontWeight:700}}>{row.g}</td>
+              <td style={{padding:"7px 6px",textAlign:"center",color:C.gray}}>{row.e}</td>
+              <td style={{padding:"7px 6px",textAlign:"center",color:"#E53935"}}>{row.p}</td>
+              <td style={{padding:"7px 6px",textAlign:"center",color:row.dif>0?C.green:row.dif<0?"#E53935":C.gray,fontWeight:700}}>{row.dif>0?"+":""}{row.dif}</td>
+              <td style={{padding:"7px 8px",textAlign:"center"}}>
+                <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,color:pos_colors[i]}}>{row.pts}</span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div style={{padding:"6px 10px",background:C.bg,fontSize:10,color:C.textM,textAlign:"center"}}>
+        🟢 clasificados automáticamente · 🏆 3° puede clasificar como mejor tercero
+      </div>
     </div>
   );
 }
 
+// ─── BRACKET TAB ─────────────────────────────────────────────────────────────
 function BracketTab({data,setData,showToast}){
   const br=data.bracket||{};
-  const g=data.groupStandings||{};
-  const g1=x=>(g[x]||GROUPS[x]?.teams||[])[0]||`1° Gr.${x}`;
-  const g2=x=>(g[x]||GROUPS[x]?.teams||[])[1]||`2° Gr.${x}`;
+  const res=data.matchResults||{};
+
+  // Get ranked team from standings
+  const ranked=(g,pos)=>{
+    const st=calcStandings(g,res);
+    return st[pos]?.team||`${pos===0?"1°":"2°"} Gr.${g}`;
+  };
+  const g1=g=>ranked(g,0);
+  const g2=g=>ranked(g,1);
+
   const pick=(id,w)=>{setData(d=>({...d,bracket:{...(d.bracket||{}),[id]:w}}));showToast(`✅ ${w} avanza!`)};
-  const r16=[
-    {id:"r16_1",home:g1("A"),away:g2("C")},{id:"r16_2",home:g1("B"),away:g2("D")},
-    {id:"r16_3",home:g1("C"),away:g2("A")},{id:"r16_4",home:g1("D"),away:g2("B")},
-    {id:"r16_5",home:g1("E"),away:g2("G")},{id:"r16_6",home:g1("F"),away:g2("H")},
-    {id:"r16_7",home:g1("G"),away:g2("E")},{id:"r16_8",home:g1("H"),away:g2("F")},
-    {id:"r16_9",home:g1("I"),away:g2("K")},{id:"r16_10",home:g1("J"),away:g2("L")},
-    {id:"r16_11",home:g1("K"),away:g2("I")},{id:"r16_12",home:g1("L"),away:g2("J")},
-    {id:"r16_13",home:"Mejor 3° A/B/C",away:"Mejor 3° D/E/F"},{id:"r16_14",home:"Mejor 3° G/H/I",away:"Mejor 3° J/K/L"},
-    {id:"r16_15",home:"Mejor 3° A/C/D",away:"Mejor 3° B/E/F"},{id:"r16_16",home:"Mejor 3° G/I/J",away:"Mejor 3° H/K/L"},
+
+  // 16 AVOS — 16 matches
+  const avos=[
+    {id:"a1",home:g1("A"),away:g2("C"),label:"Partido 1"},
+    {id:"a2",home:g1("B"),away:g2("D"),label:"Partido 2"},
+    {id:"a3",home:g1("C"),away:g2("A"),label:"Partido 3"},
+    {id:"a4",home:g1("D"),away:g2("B"),label:"Partido 4"},
+    {id:"a5",home:g1("E"),away:g2("G"),label:"Partido 5"},
+    {id:"a6",home:g1("F"),away:g2("H"),label:"Partido 6"},
+    {id:"a7",home:g1("G"),away:g2("E"),label:"Partido 7"},
+    {id:"a8",home:g1("H"),away:g2("F"),label:"Partido 8"},
+    {id:"a9",home:g1("I"),away:g2("K"),label:"Partido 9"},
+    {id:"a10",home:g1("J"),away:g2("L"),label:"Partido 10"},
+    {id:"a11",home:g1("K"),away:g2("I"),label:"Partido 11"},
+    {id:"a12",home:g1("L"),away:g2("J"),label:"Partido 12"},
+    {id:"a13",home:"Mejor 3° A/B/C",away:"Mejor 3° D/E/F",label:"Partido 13"},
+    {id:"a14",home:"Mejor 3° G/H/I",away:"Mejor 3° J/K/L",label:"Partido 14"},
+    {id:"a15",home:"Mejor 3° A/C/D",away:"Mejor 3° B/E/F",label:"Partido 15"},
+    {id:"a16",home:"Mejor 3° G/I/J",away:"Mejor 3° H/K/L",label:"Partido 16"},
   ];
-  const qf=[
-    {id:"qf_1",home:br.r16_1||"?",away:br.r16_2||"?"},{id:"qf_2",home:br.r16_3||"?",away:br.r16_4||"?"},
-    {id:"qf_3",home:br.r16_5||"?",away:br.r16_6||"?"},{id:"qf_4",home:br.r16_7||"?",away:br.r16_8||"?"},
-    {id:"qf_5",home:br.r16_9||"?",away:br.r16_10||"?"},{id:"qf_6",home:br.r16_11||"?",away:br.r16_12||"?"},
-    {id:"qf_7",home:br.r16_13||"?",away:br.r16_14||"?"},{id:"qf_8",home:br.r16_15||"?",away:br.r16_16||"?"},
+
+  // OCTAVOS — 8 matches (winners of 16avos)
+  const octavos=[
+    {id:"o1",home:br.a1||"?",away:br.a2||"?"},
+    {id:"o2",home:br.a3||"?",away:br.a4||"?"},
+    {id:"o3",home:br.a5||"?",away:br.a6||"?"},
+    {id:"o4",home:br.a7||"?",away:br.a8||"?"},
+    {id:"o5",home:br.a9||"?",away:br.a10||"?"},
+    {id:"o6",home:br.a11||"?",away:br.a12||"?"},
+    {id:"o7",home:br.a13||"?",away:br.a14||"?"},
+    {id:"o8",home:br.a15||"?",away:br.a16||"?"},
   ];
-  const sf=[
-    {id:"sf_1",home:br.qf_1||"?",away:br.qf_2||"?"},{id:"sf_2",home:br.qf_3||"?",away:br.qf_4||"?"},
-    {id:"sf_3",home:br.qf_5||"?",away:br.qf_6||"?"},{id:"sf_4",home:br.qf_7||"?",away:br.qf_8||"?"},
+
+  // CUARTOS — 4 matches
+  const cuartos=[
+    {id:"c1",home:br.o1||"?",away:br.o2||"?"},
+    {id:"c2",home:br.o3||"?",away:br.o4||"?"},
+    {id:"c3",home:br.o5||"?",away:br.o6||"?"},
+    {id:"c4",home:br.o7||"?",away:br.o8||"?"},
   ];
-  const f3={id:"3rd",home:br.sf_2||"?",away:br.sf_3||"?"};
-  const fn={id:"final",home:br.sf_1||"?",away:br.sf_4||"?"};
-  const champ=br.final||null;
+
+  // SEMIS — 2 matches
+  const semis=[
+    {id:"s1",home:br.c1||"?",away:br.c2||"?"},
+    {id:"s2",home:br.c3||"?",away:br.c4||"?"},
+  ];
+
+  // TERCER LUGAR
+  const tercero={id:"t3",home:br.s1_loser||"?",away:br.s2_loser||"?"};
+
+  // FINAL
+  const final={id:"fin",home:br.s1||"?",away:br.s2||"?"};
+  const champ=br.fin||null;
+
   const rounds=[
-    {label:"16AVOS DE FINAL",color:C.blue,matches:r16,cols:2},
-    {label:"CUARTOS DE FINAL",color:C.green,matches:qf,cols:2},
-    {label:"SEMIFINALES",color:C.gray,matches:sf,cols:2},
-    {label:"TERCER LUGAR",color:C.blue,matches:[f3],cols:1},
-    {label:"GRAN FINAL",color:C.green,matches:[fn],cols:1,isFinal:true},
+    {label:"16AVOS DE FINAL",icon:"⚡",color:C.blue,matches:avos,cols:2,note:"16 partidos"},
+    {label:"OCTAVOS DE FINAL",icon:"🔵",color:C.blue,matches:octavos,cols:2,note:"8 partidos"},
+    {label:"CUARTOS DE FINAL",icon:"🟢",color:C.green,matches:cuartos,cols:2,note:"4 partidos"},
+    {label:"SEMIFINALES",icon:"🔶",color:C.gray,matches:semis,cols:2,note:"2 partidos"},
+    {label:"TERCER LUGAR",icon:"🥉",color:C.gray,matches:[tercero],cols:1,note:"3er y 4to puesto"},
+    {label:"GRAN FINAL",icon:"🏆",color:C.green,matches:[final],cols:1,isFinal:true,note:"El campeón"},
   ];
+
   return(
     <div>
-      <PH title="Bracket del Mundial" sub="Elige al campeón paso a paso"/>
-      <Divider/>
+      <PH title="Bracket del Mundial" sub="16avos → Octavos → Cuartos → Semis → Final"/>
+      <Div/>
+
       {champ&&(
-        <div className="champ" style={{background:C.greenLight,border:`2px solid ${C.green}`,borderRadius:16,padding:20,display:"flex",alignItems:"center",justifyContent:"center",gap:16,marginBottom:20,flexWrap:"wrap"}}>
+        <div className="champ" style={{background:C.greenL,border:`2px solid ${C.green}`,borderRadius:16,padding:20,display:"flex",alignItems:"center",justifyContent:"center",gap:16,marginBottom:20,flexWrap:"wrap"}}>
           <TrophySVG size={50}/>
           <div style={{textAlign:"center"}}>
             <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:4,color:C.gray}}>MI CAMPEÓN MUNDIAL 2026</div>
             <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:34,fontWeight:900,color:C.green,letterSpacing:2}}>{FLAGS[champ]||""} {champ}</div>
-            <div style={{fontSize:9,color:C.textMuted,letterSpacing:2}}>WE ARE 26 · FIFA WORLD CUP™</div>
+            <div style={{fontSize:9,color:C.textM,letterSpacing:2}}>WE ARE 26 · FIFA WORLD CUP™</div>
           </div>
           <TrophySVG size={50}/>
         </div>
       )}
+
       {rounds.map(r=>(
         <div key={r.label} style={{marginBottom:24}}>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
             <div style={{height:3,width:20,background:r.color,borderRadius:2}}/>
-            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:900,color:r.color,letterSpacing:2}}>{r.label}</span>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:900,color:r.color,letterSpacing:1.5}}>{r.icon} {r.label}</span>
             <div style={{flex:1,height:1,background:C.border}}/>
-            <span style={{fontSize:10,color:C.textMuted}}>{r.matches.length} partidos</span>
+            <span style={{fontSize:10,color:C.textM,background:C.grayL,padding:"2px 8px",borderRadius:99,border:`1px solid ${C.border}`}}>{r.note}</span>
           </div>
           <div style={{display:"grid",gridTemplateColumns:`repeat(${r.cols},1fr)`,gap:8}}>
             {r.matches.map(m=>(
               <div key={m.id} style={{background:C.white,border:`1px solid ${r.isFinal?r.color:C.border}`,borderRadius:10,padding:10,display:"flex",flexDirection:"column",gap:4,boxShadow:"0 1px 4px rgba(0,0,0,.04)"}}>
+                {m.label&&<div style={{fontSize:10,color:C.textM,fontWeight:700,marginBottom:2,letterSpacing:.5}}>{m.label}</div>}
                 {[m.home,m.away].map((team,ti)=>{
-                  const na=team==="?"||team.startsWith("Mejor");
+                  const na=!team||team==="?"||team.startsWith("Mejor");
                   const win=br[m.id]===team;
                   return(
-                    <button key={ti} className="bkt" style={{display:"flex",alignItems:"center",gap:8,padding:"8px 10px",background:win?bgFor(r.color):(na?C.grayLight:C.offWhite),border:`1px solid ${win?r.color:C.border}`,borderRadius:8,cursor:na?"default":"pointer",color:win?r.color:C.textSecondary,fontFamily:"'Barlow',sans-serif",width:"100%",transition:"all .2s",opacity:na?.4:1}}
+                    <button key={ti} className="bkt" style={{display:"flex",alignItems:"center",gap:8,padding:"9px 10px",background:win?bg4(r.color):(na?C.grayL:C.bg),border:`1px solid ${win?r.color:C.border}`,borderRadius:8,cursor:na?"default":"pointer",fontFamily:"'Barlow',sans-serif",width:"100%",transition:"all .2s",opacity:na?.35:1}}
                       onClick={()=>!na&&pick(m.id,team)}>
-                      <span style={{fontSize:16}}>{FLAGS[team]||(team==="?"?"❓":"🏳️")}</span>
-                      <span style={{fontSize:12,fontWeight:600,flex:1,textAlign:"left",color:win?r.color:C.textPrimary}}>{team}</span>
-                      {win&&<span style={{fontSize:9,color:r.color,fontWeight:700}}>✓ AVANZA</span>}
+                      <span style={{fontSize:17}}>{FLAGS[team]||(team==="?"?"❓":"🏳️")}</span>
+                      <span style={{fontSize:12,fontWeight:win?700:500,flex:1,textAlign:"left",color:win?r.color:C.text}}>{team||"Por definir"}</span>
+                      {win&&<span style={{fontSize:9,color:r.color,fontWeight:700,background:bg4(r.color),padding:"2px 6px",borderRadius:99}}>✓ AVANZA</span>}
                     </button>
                   );
                 })}
@@ -621,6 +718,7 @@ function BracketTab({data,setData,showToast}){
   );
 }
 
+// ─── RANKING TAB ─────────────────────────────────────────────────────────────
 function RankingTab({data,user,showToast}){
   const preds=data.predictions||{};
   const filled=PRED_CATS.filter(c=>preds[c.key]).length;
@@ -628,42 +726,42 @@ function RankingTab({data,user,showToast}){
   const bracketPicks=Object.keys(data.bracket||{}).length;
   const favFlag=FLAGS[user.favTeam]||"⚽";
   const share=()=>{
-    const txt=`🏆 Mis predicciones #Mundial2026\n👤 ${user.name}${user.favTeam?`\n${favFlag} ${user.favTeam}`:""}${user.favPlayer?`\n⭐ ${user.favPlayer}`:""}\n\n📊 ${filled}/${PRED_CATS.length} predicciones · ${matches} partidos\n🔗 ${window.location.href}`;
+    const txt=`🏆 Mis predicciones #Mundial2026\n👤 ${user.name}${user.favTeam?`\n${favFlag} ${user.favTeam}`:""}${user.favPlayer?`\n⭐ ${user.favPlayer}`:""}\n\n📊 ${filled}/${PRED_CATS.length} categorías · ${matches} partidos predichos\n🔗 ${window.location.href}`;
     navigator.clipboard?.writeText(txt);showToast("📋 ¡Copiado!");
   };
   return(
     <div>
       <PH title="Mi Perfil y Ranking" sub="Tus predicciones y estadísticas"><button style={S.btnG} onClick={share}>📤 Compartir</button></PH>
-      <Divider/>
+      <Div/>
       <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:14,padding:20,marginBottom:12,boxShadow:"0 1px 5px rgba(0,0,0,.05)"}}>
         <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:16}}>
-          <div style={{width:54,height:54,borderRadius:"50%",background:C.greenLight,border:`2px solid ${C.green}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,flexShrink:0}}>{favFlag||"👤"}</div>
+          <div style={{width:54,height:54,borderRadius:"50%",background:C.greenL,border:`2px solid ${C.green}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,flexShrink:0}}>{favFlag||"👤"}</div>
           <div style={{flex:1}}>
-            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:26,fontWeight:900,color:C.textPrimary,letterSpacing:1}}>{user.name||"Sin nombre"}</div>
-            {user.favTeam&&<div style={{fontSize:12,color:C.textMuted}}>{favFlag} {user.favTeam}{user.favPlayer?` · ⭐ ${user.favPlayer}`:""}</div>}
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:26,fontWeight:900,color:C.text,letterSpacing:1}}>{user.name||"Sin nombre"}</div>
+            {user.favTeam&&<div style={{fontSize:12,color:C.textM}}>{favFlag} {user.favTeam}{user.favPlayer?` · ⭐ ${user.favPlayer}`:""}</div>}
           </div>
         </div>
         <div style={{display:"flex",gap:8}}>
-          {[{n:filled,l:"Predicciones",c:C.green,bg:C.greenLight},{n:matches,l:"Partidos",c:C.blue,bg:C.blueLight},{n:bracketPicks,l:"Bracket",c:C.gray,bg:C.grayLight}].map(s=>(
+          {[{n:filled,l:"Categorías",c:C.green,bg:C.greenL},{n:matches,l:"Partidos",c:C.blue,bg:C.blueL},{n:bracketPicks,l:"Bracket",c:C.gray,bg:C.grayL}].map(s=>(
             <div key={s.l} style={{flex:1,background:s.bg,border:`1px solid ${s.c}44`,borderRadius:10,padding:"12px 0",textAlign:"center"}}>
               <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:28,fontWeight:900,color:s.c}}>{s.n}</div>
-              <div style={{fontSize:10,color:C.textMuted}}>{s.l}</div>
+              <div style={{fontSize:10,color:C.textM}}>{s.l}</div>
             </div>
           ))}
         </div>
       </div>
       <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:14,padding:18,marginBottom:12,boxShadow:"0 1px 5px rgba(0,0,0,.05)"}}>
-        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:900,color:C.textPrimary,letterSpacing:1.5,marginBottom:14}}>MIS PREDICCIONES</div>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:900,color:C.text,letterSpacing:1.5,marginBottom:14}}>MIS PREDICCIONES</div>
         {PRED_CATS.map(cat=>{
           const val=preds[cat.key];
           const name=val?(cat.type==="team"?val:(typeof val==="object"?val.name:val)):null;
           const flag=val?(cat.type==="team"?(FLAGS[val]||"🏳️"):(typeof val==="object"?val.flag:"⚽")):null;
           return(
-            <div key={cat.key} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 10px",borderBottom:`1px solid ${C.borderLight}`,borderLeft:`4px solid ${val?cat.color:C.border}`,marginBottom:3,borderRadius:"0 6px 6px 0",background:val?bgFor(cat.color):"transparent"}}>
+            <div key={cat.key} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 10px",borderBottom:`1px solid ${C.borderL}`,borderLeft:`4px solid ${val?cat.color:C.border}`,marginBottom:3,borderRadius:"0 6px 6px 0",background:val?bg4(cat.color):"transparent"}}>
               <span style={{fontSize:18}}>{cat.icon}</span>
               <div style={{flex:1}}>
-                <div style={{fontSize:10,color:C.textMuted,fontWeight:700,letterSpacing:.5}}>{cat.label.toUpperCase()}</div>
-                <div style={{fontSize:13,fontWeight:600,color:val?C.textPrimary:C.border}}>{val?<span>{flag} {name}</span>:"Sin predicción"}</div>
+                <div style={{fontSize:10,color:C.textM,fontWeight:700,letterSpacing:.5}}>{cat.label.toUpperCase()}</div>
+                <div style={{fontSize:13,fontWeight:600,color:val?C.text:C.border}}>{val?<span>{flag} {name}</span>:"Sin predicción"}</div>
               </div>
               <div style={{width:8,height:8,borderRadius:"50%",background:val?cat.color:C.border}}/>
             </div>
@@ -674,8 +772,8 @@ function RankingTab({data,user,showToast}){
         <div style={{height:5,background:`linear-gradient(90deg,${C.green},${C.blue},${C.gray})`}}/>
         <div style={{padding:24,textAlign:"center"}}>
           <div style={{fontSize:40,marginBottom:10}}>👥⚽</div>
-          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:24,fontWeight:900,color:C.textPrimary,letterSpacing:2,marginBottom:4}}>INVITA A TUS AMIGOS</div>
-          <div style={{fontSize:13,color:C.textMuted,marginBottom:18}}>Comparte el link y comparen sus predicciones</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:24,fontWeight:900,color:C.text,letterSpacing:2,marginBottom:4}}>INVITA A TUS AMIGOS</div>
+          <div style={{fontSize:13,color:C.textM,marginBottom:18}}>Comparte el link y comparen sus predicciones</div>
           <button style={{...S.btnMain,maxWidth:300,margin:"0 auto"}} onClick={share}>📤 COPIAR LINK DE INVITACIÓN</button>
         </div>
       </div>
@@ -687,8 +785,8 @@ function PH({title,sub,children}){
   return(
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginBottom:12}}>
       <div>
-        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:28,fontWeight:900,color:C.textPrimary,letterSpacing:1.5}}>{title}</div>
-        {sub&&<div style={{fontSize:11,color:C.textMuted}}>{sub}</div>}
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:28,fontWeight:900,color:C.text,letterSpacing:1.5}}>{title}</div>
+        {sub&&<div style={{fontSize:11,color:C.textM,marginTop:2}}>{sub}</div>}
       </div>
       {children}
     </div>
@@ -696,24 +794,24 @@ function PH({title,sub,children}){
 }
 
 const S={
-  app:{minHeight:"100vh",background:C.offWhite,fontFamily:"'Barlow','Trebuchet MS',sans-serif",color:C.textPrimary,overflowX:"hidden"},
+  app:{minHeight:"100vh",background:C.bg,fontFamily:"'Barlow','Trebuchet MS',sans-serif",color:C.text,overflowX:"hidden"},
   header:{background:C.white,borderBottom:`1px solid ${C.border}`,position:"sticky",top:0,zIndex:100,boxShadow:"0 2px 10px rgba(0,0,0,.06)"},
   hRow:{maxWidth:960,margin:"0 auto",padding:"12px 16px",display:"flex",justifyContent:"space-between",alignItems:"center",gap:12},
-  hTitle:{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:900,color:C.textPrimary,letterSpacing:3,lineHeight:1},
-  hSub:{fontSize:9,color:C.textMuted,letterSpacing:2,marginTop:2},
-  pill:{background:C.offWhite,border:`1px solid ${C.border}`,borderRadius:10,padding:"7px 14px",display:"flex",alignItems:"center",gap:10,cursor:"pointer",transition:"all .2s"},
+  hTitle:{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:900,color:C.text,letterSpacing:3,lineHeight:1},
+  hSub:{fontSize:9,color:C.textM,letterSpacing:2,marginTop:2},
+  pill:{background:C.bg,border:`1px solid ${C.border}`,borderRadius:10,padding:"7px 14px",display:"flex",alignItems:"center",gap:10,cursor:"pointer",transition:"all .2s"},
   nav:{background:C.white,borderBottom:`1px solid ${C.border}`,display:"flex",overflowX:"auto",position:"sticky",top:74,zIndex:99,boxShadow:"0 1px 4px rgba(0,0,0,.04)"},
-  navTab:{background:"none",border:"none",borderBottom:"3px solid transparent",padding:"12px 14px",color:C.textMuted,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,minWidth:64,transition:"all .2s",fontFamily:"'Barlow Condensed',sans-serif"},
+  navTab:{background:"none",border:"none",borderBottom:"3px solid transparent",padding:"12px 14px",color:C.textM,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,minWidth:64,transition:"all .2s",fontFamily:"'Barlow Condensed',sans-serif"},
   main:{maxWidth:960,margin:"0 auto",padding:"20px 14px 56px"},
-  inp:{width:"100%",background:C.offWhite,border:`1px solid ${C.border}`,borderRadius:9,padding:"11px 14px",color:C.textPrimary,fontSize:13,outline:"none",display:"block",marginBottom:2,transition:"border-color .2s"},
-  srch:{width:"100%",background:C.offWhite,border:`1px solid ${C.border}`,borderRadius:9,padding:"9px 12px",color:C.textPrimary,fontSize:13,outline:"none",transition:"border-color .2s"},
+  inp:{width:"100%",background:C.bg,border:`1px solid ${C.border}`,borderRadius:9,padding:"11px 14px",color:C.text,fontSize:13,outline:"none",display:"block",marginBottom:2,transition:"border-color .2s"},
+  srch:{width:"100%",background:C.bg,border:`1px solid ${C.border}`,borderRadius:9,padding:"9px 12px",color:C.text,fontSize:13,outline:"none",transition:"border-color .2s"},
   drop:{position:"absolute",top:"calc(100% + 4px)",left:0,right:0,zIndex:200,background:C.white,border:`1px solid ${C.border}`,borderRadius:10,maxHeight:220,overflowY:"auto",boxShadow:"0 8px 24px rgba(0,0,0,.12)"},
-  dRow:{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",cursor:"pointer",borderBottom:`1px solid ${C.borderLight}`},
-  fBtn:{background:C.white,border:`1px solid ${C.border}`,borderRadius:7,padding:"5px 11px",color:C.textSecondary,cursor:"pointer",fontSize:11,fontWeight:700,letterSpacing:.5,fontFamily:"'Barlow Condensed',sans-serif",transition:"all .2s"},
-  sInp:{width:48,height:48,background:C.offWhite,border:"2px solid",borderRadius:9,color:C.green,fontSize:20,fontWeight:900,textAlign:"center",outline:"none",fontFamily:"'Barlow Condensed',sans-serif",transition:"border-color .2s"},
+  dRow:{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",cursor:"pointer",borderBottom:`1px solid ${C.borderL}`},
+  fBtn:{background:C.white,border:`1px solid ${C.border}`,borderRadius:7,padding:"5px 11px",color:C.textS,cursor:"pointer",fontSize:11,fontWeight:700,letterSpacing:.5,fontFamily:"'Barlow Condensed',sans-serif",transition:"all .2s"},
+  sInp:{width:48,height:48,background:C.bg,border:"2px solid",borderRadius:9,color:C.green,fontSize:20,fontWeight:900,textAlign:"center",outline:"none",fontFamily:"'Barlow Condensed',sans-serif",transition:"border-color .2s"},
   btnMain:{display:"block",background:`linear-gradient(135deg,${C.green},${C.blue})`,border:"none",borderRadius:10,padding:"13px 20px",color:"#fff",fontWeight:700,cursor:"pointer",fontSize:13,width:"100%",fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:1},
   btnG:{background:C.green,border:"none",borderRadius:8,padding:"9px 16px",color:"#fff",fontWeight:700,cursor:"pointer",fontSize:11,fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:.5,boxShadow:`0 2px 8px ${C.green}44`},
   modalBg:{position:"fixed",inset:0,background:"rgba(0,0,0,.45)",zIndex:999,display:"flex",alignItems:"center",justifyContent:"center",padding:20,overflowY:"auto"},
   modal:{background:C.white,border:`1px solid ${C.border}`,borderRadius:16,maxWidth:400,width:"100%",overflow:"hidden",boxShadow:"0 24px 60px rgba(0,0,0,.18)"},
-  toast:{position:"fixed",bottom:24,left:"50%",transform:"translateX(-50%)",background:C.textPrimary,color:"#fff",padding:"10px 22px",borderRadius:999,fontWeight:600,fontSize:13,zIndex:9999,boxShadow:"0 6px 20px rgba(0,0,0,.2)",whiteSpace:"nowrap",fontFamily:"'Barlow Condensed',sans-serif"},
+  toast:{position:"fixed",bottom:24,left:"50%",transform:"translateX(-50%)",background:C.text,color:"#fff",padding:"10px 22px",borderRadius:999,fontWeight:600,fontSize:13,zIndex:9999,boxShadow:"0 6px 20px rgba(0,0,0,.2)",whiteSpace:"nowrap",fontFamily:"'Barlow Condensed',sans-serif"},
 };
