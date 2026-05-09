@@ -230,11 +230,11 @@ export default function App(){
   const showToast=msg=>{setToast(msg);setTimeout(()=>setToast(null),2500)};
   const updatePred=(key,val)=>{setData(d=>({...d,predictions:{...(d.predictions||{}),[key]:val}}));showToast("✅ ¡Guardado!")};
   const TABS=[
-    {id:"HOME",icon:"🏠",label:"INICIO"},
-    {id:"CALENDAR",icon:"📅",label:"PARTIDOS"},
-    {id:"GROUPS",icon:"🗂",label:"GRUPOS"},
-    {id:"BRACKET",icon:"🏅",label:"BRACKET"},
-    {id:"RANKING",icon:"👥",label:"RANKING"},
+    {id:"home",icon:"🏠",label:"INICIO"},
+    {id:"calendar",icon:"📅",label:"PARTIDOS"},
+    {id:"groups",icon:"🗂",label:"GRUPOS"},
+    {id:"bracket",icon:"🏅",label:"BRACKET"},
+    {id:"ranking",icon:"👥",label:"RANKING"},
   ];
   return(
     <div style={S.app}>
@@ -345,14 +345,14 @@ function SetupModal({user,setUser,onClose}){
 function Lbl({children,mt}){return <div style={{fontSize:10,color:C.textM,fontWeight:700,letterSpacing:1.5,marginBottom:6,marginTop:mt?14:0}}>{children}</div>}
 
 const PRED_CATS=[
-  {key:"champion",label:"CAMPEON MUNDIAL",icon:"🏆",type:"team",color:C.green},
-  {key:"surprise_team",label:"EQUIPO SORPRESA",icon:"⚡",type:"team",color:C.blue},
-  {key:"surprise_player",label:"JUGADOR SORPRESA",icon:"🌟",type:"player",color:C.blue},
-  {key:"disappointment_player",label:"JUGADOR DECEPCION",icon:"😞",type:"player",color:C.gray},
-  {key:"disappointment_team",label:"EQUIPO DECEPCION",icon:"💔",type:"team",color:C.gray},
-  {key:"top_scorer",label:"TOP GOLEADOR",icon:"⚽",type:"player",color:C.green},
-  {key:"top_assist",label:"TOP ASISTIDOR",icon:"🎯",type:"player",color:C.blue},
-  {key:"best_keeper",label:"PORTERO DEL MUNDIAL",icon:"🧤",type:"player",color:C.green},
+  {key:"champion",label:"Campeón Mundial",icon:"🏆",type:"team",color:C.green},
+  {key:"surprise_team",label:"Equipo Sorpresa",icon:"⚡",type:"team",color:C.blue},
+  {key:"surprise_player",label:"Jugador Sorpresa",icon:"🌟",type:"player",color:C.blue},
+  {key:"disappointment_player",label:"Jugador Decepción",icon:"😞",type:"player",color:C.gray},
+  {key:"disappointment_team",label:"Equipo Decepción",icon:"💔",type:"team",color:C.gray},
+  {key:"top_scorer",label:"Goleador del Torneo",icon:"⚽",type:"player",color:C.green},
+  {key:"top_assist",label:"Asistidor del Torneo",icon:"🎯",type:"player",color:C.blue},
+  {key:"best_keeper",label:"Portero del Torneo",icon:"🧤",type:"player",color:C.green},
 ];
 
 function HomeTab({preds,updatePred,user}){
