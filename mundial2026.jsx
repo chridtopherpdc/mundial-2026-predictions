@@ -11,176 +11,189 @@ const C = {
 
 const bg4 = c => c===C.green?C.greenL:c===C.blue?C.blueL:C.grayL;
 
+// ✅ GRUPOS OFICIALES FIFA MUNDIAL 2026
 const GROUPS = {
-  A:{teams:["México","Ecuador","Croacia","Marruecos"],color:C.green},
-  B:{teams:["España","Turquía","Senegal","Serbia"],color:C.blue},
-  C:{teams:["Alemania","Japón","Costa Rica","Eslovenia"],color:C.green},
-  D:{teams:["Portugal","Italia","Uruguay","Arabia Saudita"],color:C.blue},
-  E:{teams:["Francia","Polonia","Australia","Nigeria"],color:C.green},
-  F:{teams:["Argentina","Chile","Eslovaquia","China"],color:C.blue},
-  G:{teams:["Brasil","Colombia","Argelia","Nueva Zelanda"],color:C.green},
-  H:{teams:["Inglaterra","Países Bajos","Ghana","Panamá"],color:C.blue},
-  I:{teams:["Estados Unidos","Canadá","Venezuela","Georgia"],color:C.green},
-  J:{teams:["Bélgica","Suiza","Camerún","Tanzania"],color:C.blue},
-  K:{teams:["Corea del Sur","Irán","Kenia","Guatemala"],color:C.green},
-  L:{teams:["Perú","República Checa","Indonesia","Bosnia"],color:C.blue},
+  A:{teams:["México","Sudáfrica","Corea del Sur","Chequia"],color:C.green},
+  B:{teams:["Canadá","Bosnia y Herzegovina","Qatar","Suiza"],color:C.blue},
+  C:{teams:["Brasil","Alemania","Curazao","Costa de Marfil"],color:C.green},
+  D:{teams:["Estados Unidos","Australia","Paraguay","Turquía"],color:C.blue},
+  E:{teams:["Países Bajos","Japón","Suecia","Túnez"],color:C.green},
+  F:{teams:["Bélgica","Nueva Zelanda","Irán","Egipto"],color:C.blue},
+  G:{teams:["Escocia","Marruecos","Haití","Senegal"],color:C.green},
+  H:{teams:["España","Cabo Verde","Arabia Saudita","Uruguay"],color:C.blue},
+  I:{teams:["Francia","Irak","Senegal","Noruega"],color:C.green},
+  J:{teams:["Argentina","Argelia","Austria","Jordania"],color:C.blue},
+  K:{teams:["Portugal","RD del Congo","Uzbekistán","Colombia"],color:C.green},
+  L:{teams:["Inglaterra","Croacia","Ghana","Panamá"],color:C.blue},
 };
 
 const FLAGS = {
-  "México":"🇲🇽","Ecuador":"🇪🇨","Croacia":"🇭🇷","Marruecos":"🇲🇦",
-  "España":"🇪🇸","Turquía":"🇹🇷","Senegal":"🇸🇳","Serbia":"🇷🇸",
-  "Alemania":"🇩🇪","Japón":"🇯🇵","Costa Rica":"🇨🇷","Eslovenia":"🇸🇮",
-  "Portugal":"🇵🇹","Italia":"🇮🇹","Uruguay":"🇺🇾","Arabia Saudita":"🇸🇦",
-  "Francia":"🇫🇷","Polonia":"🇵🇱","Australia":"🇦🇺","Nigeria":"🇳🇬",
-  "Argentina":"🇦🇷","Chile":"🇨🇱","Eslovaquia":"🇸🇰","China":"🇨🇳",
-  "Brasil":"🇧🇷","Colombia":"🇨🇴","Argelia":"🇩🇿","Nueva Zelanda":"🇳🇿",
-  "Inglaterra":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Países Bajos":"🇳🇱","Ghana":"🇬🇭","Panamá":"🇵🇦",
-  "Estados Unidos":"🇺🇸","Canadá":"🇨🇦","Venezuela":"🇻🇪","Georgia":"🇬🇪",
-  "Bélgica":"🇧🇪","Suiza":"🇨🇭","Camerún":"🇨🇲","Tanzania":"🇹🇿",
-  "Corea del Sur":"🇰🇷","Irán":"🇮🇷","Kenia":"🇰🇪","Guatemala":"🇬🇹",
-  "Perú":"🇵🇪","República Checa":"🇨🇿","Indonesia":"🇮🇩","Bosnia":"🇧🇦",
+  "México":"🇲🇽","Sudáfrica":"🇿🇦","Corea del Sur":"🇰🇷","Chequia":"🇨🇿",
+  "Canadá":"🇨🇦","Bosnia y Herzegovina":"🇧🇦","Qatar":"🇶🇦","Suiza":"🇨🇭",
+  "Brasil":"🇧🇷","Alemania":"🇩🇪","Curazao":"🇨🇼","Costa de Marfil":"🇨🇮",
+  "Estados Unidos":"🇺🇸","Australia":"🇦🇺","Paraguay":"🇵🇾","Turquía":"🇹🇷",
+  "Países Bajos":"🇳🇱","Japón":"🇯🇵","Suecia":"🇸🇪","Túnez":"🇹🇳",
+  "Bélgica":"🇧🇪","Nueva Zelanda":"🇳🇿","Irán":"🇮🇷","Egipto":"🇪🇬",
+  "Escocia":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Marruecos":"🇲🇦","Haití":"🇭🇹","Senegal":"🇸🇳",
+  "España":"🇪🇸","Cabo Verde":"🇨🇻","Arabia Saudita":"🇸🇦","Uruguay":"🇺🇾",
+  "Francia":"🇫🇷","Irak":"🇮🇶","Nigeria":"🇳🇬","Noruega":"🇳🇴",
+  "Argentina":"🇦🇷","Argelia":"🇩🇿","Austria":"🇦🇹","Jordania":"🇯🇴",
+  "Portugal":"🇵🇹","RD del Congo":"🇨🇩","Uzbekistán":"🇺🇿","Colombia":"🇨🇴",
+  "Inglaterra":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Croacia":"🇭🇷","Ghana":"🇬🇭","Panamá":"🇵🇦",
 };
 
+// ✅ JUGADORES POR EQUIPO CLASIFICADO
 const PLAYERS_BY_TEAM = {
-  "Portugal":["Cristiano Ronaldo","Bruno Fernandes","Rúben Dias","João Cancelo","Rafael Leão","Bernardo Silva","Diogo Costa","Vitinha","Pedro Neto","Diogo Jota","Otávio"],
-  "España":["Pedri","Gavi","Lamine Yamal","Álvaro Morata","Unai Simón","Dani Carvajal","Rodri","Nico Williams","Mikel Merino","Joselu","Nacho"],
-  "Francia":["Kylian Mbappé","Antoine Griezmann","Olivier Giroud","Kingsley Coman","Theo Hernández","Mike Maignan","Eduardo Camavinga","Aurélien Tchouaméni","Marcus Thuram","Ousmane Dembélé","Adrien Rabiot"],
-  "Argentina":["Lionel Messi","Ángel Di María","Lautaro Martínez","Rodrigo De Paul","Emiliano Martínez","Nicolás Otamendi","Alexis Mac Allister","Julián Álvarez","Paulo Dybala","Leandro Paredes","Nahuel Molina"],
-  "Brasil":["Vinicius Jr.","Rodrygo","Casemiro","Alisson Becker","Marquinhos","Endrick","Raphinha","Lucas Paquetá","Gabriel Martinelli","Éder Militão","Neymar Jr."],
-  "Alemania":["Manuel Neuer","Thomas Müller","Jamal Musiala","Kai Havertz","Toni Kroos","Joshua Kimmich","Florian Wirtz","İlkay Gündoğan","Leroy Sané","Niclas Füllkrug","Antonio Rüdiger"],
-  "Inglaterra":["Harry Kane","Jude Bellingham","Bukayo Saka","Phil Foden","Jordan Pickford","Declan Rice","Trent Alexander-Arnold","Marcus Rashford","Jack Grealish","John Stones","Raheem Sterling"],
-  "Italia":["Gianluigi Donnarumma","Federico Chiesa","Nicolò Barella","Lorenzo Pellegrini","Giorgio Scalvini","Giacomo Raspadori","Ciro Immobile","Alessandro Bastoni","Federico Dimarco","Marco Verratti","Matteo Darmian"],
-  "México":["Guillermo Ochoa","Hirving Lozano","Raúl Jiménez","Edson Álvarez","Andrés Guardado","Carlos Vela","Orbelin Pineda","Roberto Alvarado","Alexis Vega","Henry Martín","Johan Vásquez"],
-  "Uruguay":["Luis Suárez","Darwin Núñez","Federico Valverde","José María Giménez","Sergio Rochet","Ronald Araújo","Rodrigo Bentancur","Edinson Cavani","Facundo Pellistri","Maximiliano Gómez","Matías Vecino"],
-  "Países Bajos":["Virgil van Dijk","Memphis Depay","Frenkie de Jong","Cody Gakpo","Xavi Simons","Wout Weghorst","Jurriën Timber","Denzel Dumfries","Ryan Gravenberch","Steven Bergwijn","Davy Klaassen"],
-  "Bélgica":["Kevin De Bruyne","Romelu Lukaku","Thibaut Courtois","Eden Hazard","Jan Vertonghen","Yannick Carrasco","Dries Mertens","Leandro Trossard","Charles De Ketelaere","Loïs Openda","Axel Witsel"],
-  "Croacia":["Luka Modrić","Ivan Perišić","Mateo Kovačić","Dominik Livaković","Dejan Lovren","Marcelo Brozović","Andrej Kramarić","Bruno Petković","Joško Gvardiol","Borna Sosa","Nikola Vlašić"],
-  "Colombia":["James Rodríguez","Falcao García","David Ospina","Luis Díaz","Juan Cuadrado","Yerry Mina","Duván Zapata","Mateus Uribe","Miguel Ángel Borja","Rafael Santos Borré","Edwin Cardona"],
-  "Corea del Sur":["Son Heung-min","Kim Min-jae","Lee Kang-in","Hwang Hee-chan","Cho Gue-sung","Oh Hyeon-gyu","Jung Woo-young","Hwang In-beom","Kim Jin-su","Lee Jae-sung","Kim Young-gwon"],
-  "Japón":["Takumi Minamino","Wataru Endo","Daichi Kamada","Shuichi Gonda","Takehiro Tomiyasu","Ko Itakura","Ritsu Doan","Ao Tanaka","Kaoru Mitoma","Junya Ito","Hiroki Sakai"],
-  "Marruecos":["Hakim Ziyech","Achraf Hakimi","Romain Saïss","Yassine Bounou","Sofiane Boufal","Azzedine Ounahi","Youssef En-Nesyri","Noussair Mazraoui","Jawad El Yamiq","Walid Cheddira","Selim Amallah"],
-  "Senegal":["Sadio Mané","Kalidou Koulibaly","Edouard Mendy","Ismaila Sarr","Cheikhou Kouyaté","Pape Gueye","Idrissa Gueye","Boulaye Dia","Nicolas Jackson","Lamine Camara","Nampalys Mendy"],
-  "Ecuador":["Enner Valencia","Moisés Caicedo","Piero Hincapié","Byron Castillo","Hernán Galíndez","Ángel Mena","Jeremy Sarmiento","Pervis Estupiñán","Gonzalo Plata","Michael Estrada","José Cifuentes"],
-  "Australia":["Mathew Ryan","Aaron Mooy","Mathew Leckie","Awer Mabil","Mitchell Duke","Jackson Irvine","Jamie Maclaren","Brad Smith","Ajdin Hrustic","Harry Souttar","Martin Boyle"],
-  "Ghana":["Thomas Partey","Mohammed Salisu","Jordan Ayew","André Ayew","Joseph Wollacott","Alexander Djiku","Kamaldeen Sulemana","Inaki Williams","Daniel Amartey","Mohammed Kudus","Osman Bukari"],
-  "Polonia":["Robert Lewandowski","Wojciech Szczęsny","Piotr Zieliński","Kamil Glik","Grzegorz Krychowiak","Arkadiusz Milik","Bartosz Bereszyński","Matty Cash","Sebastian Szymański","Karol Świderski","Jakub Moder"],
-  "Serbia":["Aleksandar Mitrović","Dušan Tadić","Dušan Vlahović","Predrag Rajković","Nikola Milenković","Filip Kostić","Andrija Živković","Ivan Ilić","Saša Lukić","Strahinja Pavlović","Nemanja Gudelj"],
-  "Turquía":["Çağlar Söyüncü","Hakan Çalhanoğlu","Arda Güler","Kenan Yıldız","Altay Bayındır","Merih Demiral","Zeki Çelik","Yusuf Yazıcı","Orkun Kökçü","Barış Alper Yılmaz","Serdar Dursun"],
-  "Arabia Saudita":["Salem Al-Dawsari","Mohammed Al-Owais","Saleh Al-Shehri","Yasser Al-Shahrani","Ali Al-Bulayhi","Sami Al-Najei","Firas Al-Buraikan","Hassan Al-Tambakti","Mohammed Kanno","Riyadh Sharahili","Abdulelah Al-Malki"],
-  "Estados Unidos":["Christian Pulisic","Tyler Adams","Weston McKennie","Josh Sargent","Zack Steffen","Miles Robinson","Yunus Musah","Gio Reyna","Brenden Aaronson","Ricardo Pepi","Sergiño Dest"],
-  "Canadá":["Alphonso Davies","Jonathan David","Cyle Larin","Milan Borjan","Atiba Hutchinson","Junior Hoilett","Stephen Eustáquio","Tajon Buchanan","Jonathan Osorio","Mark-Anthony Kaye","Liam Fraser"],
-  "Chile":["Alexis Sánchez","Arturo Vidal","Claudio Bravo","Gary Medel","Ben Brereton","Charles Aránguiz","Marcelo Díaz","Sebastián Vegas","Felipe Mora","Paulo Díaz","Eugenio Mena"],
-  "Perú":["Paolo Guerrero","André Carrillo","Pedro Gallese","Renato Tapia","Christian Cueva","Edison Flores","Gianluca Lapadula","Luis Advíncula","Carlos Zambrano","Sergio Peña","Alexander Callens"],
-  "Nigeria":["Victor Osimhen","Wilfred Ndidi","Ahmed Musa","Francis Uzoho","Leon Balogun","Alex Iwobi","Emmanuel Dennis","Kelechi Iheanacho","Samuel Chukwueze","Joe Aribo","Oghenekaro Etebo"],
-  "Argelia":["Riyad Mahrez","Islam Slimani","Yacine Brahimi","Aïssa Mandi","Raïs M'Bolhi","Ismaël Bennacer","Adam Ounas","Sofiane Feghouli","Said Benrahma","Haris Belkebla","Djamel Benlamri"],
-  "Irán":["Mehdi Taremi","Alireza Beiranvand","Sardar Azmoun","Saman Ghoddos","Milad Mohammadi","Majid Hosseini","Karim Ansarifard","Ali Gholizadeh","Ehsan Hajsafi","Morteza Pouraliganji","Ramin Rezaeian"],
-  "Bosnia":["Edin Džeko","Miralem Pjanić","Asmir Begović","Rade Krunic","Sead Kolašinac","Ermedin Demirović","Armin Hodžić","Vedad Ibišević","Haris Duljevic","Deni Jurić","Sven Botman"],
-  "Costa Rica":["Keylor Navas","Bryan Ruiz","Joel Campbell","Celso Borges","Francisco Calvo","Kendall Waston","Marco Ureña","David Guzmán","Ronald Matarrita","Álvaro Zamora","Manfred Ugalde"],
-  "Eslovenia":["Jan Oblak","Benjamin Šeško","Josip Iličić","Jaka Bijol","Jon Gorenc Stanković","Miha Blažič","Andraž Šporar","Adam Gnezda Čerin","Timi Elsnik","Petar Stojanović","Rene Krhin"],
-  "Eslovaquia":["Milan Škriniar","Stanislav Lobotka","Lukáš Haraslín","Martin Dúbravka","Ján Greguš","Róbert Boženík","Ondrej Duda","Dávid Hancko","Peter Pekarík","Tomáš Suslov","Marek Hamšík"],
-  "República Checa":["Tomáš Souček","Vladimír Coufal","Patrik Schick","Jiří Pavlenka","Ondřej Kolář","Lukáš Masopust","Jakub Jankto","Matěj Vydra","Ladislav Krejčí","David Zima","Tomáš Holeš"],
-  "Suiza":["Xherdan Shaqiri","Granit Xhaka","Manuel Akanji","Breel Embolo","Yann Sommer","Remo Freuler","Ricardo Rodríguez","Denis Zakaria","Haris Seferović","Fabian Schär","Steven Zuber"],
-  "Camerún":["Eric Maxim Choupo-Moting","André Onana","Vincent Aboubakar","Karl Toko Ekambi","Michael Ngadeu-Ngadjui","Jean-Charles Castelletto","Nicolas Moumi Ngamaleu","Zambo Anguissa","Martin Hongla","Stéphane Bahoken","Pierre Kunde"],
-  "Georgia":["Giorgi Mamardashvili","Khvicha Kvaratskhelia","Georges Mikautadze","Guram Kashia","Otar Kakabadze","Giorgi Chakvetadze","Levan Shengelia","Saba Lobjanidze","Giorgi Arabidze","Lasha Dvali","Giorgi Loria"],
-  "Venezuela":["Salomón Rondón","Yangel Herrera","Darwin Machís","Wuilker Faríñez","Tomás Rincón","Yeferson Soteldo","Roberto Rosales","Jhon Murillo","Junior Moreno","Christian Makoun","Eric Ramírez"],
-  "Indonesia":["Marcelino Ferdinan","Egy Maulana Vikri","Witan Sulaeman","Ernando Ari","Justin Hubner","Pratama Arhan","Rafael Struick","Nathan Tjoe-A-On","Kevin Diks","Jay Idzes","Marc Klok"],
-  "China":["Wu Lei","Jiang Guangtai","Yan Junling","Xu Xin","Liu Yang","Jin Jingdao","Zhang Linpeng","Wei Shihao","Hao Junmin","Luo Guofu","Zheng Long"],
-  "Tanzania":["Mbwana Samatta","Nizar Khalfan","Simon Msuva","Aishi Manula","Shomari Kapombe","Thomas Ulimwengu","Dickson Job","Yusuf Msuya","John Bocco","Bernard Morrison","Emmanuel Okwi"],
-  "Kenia":["Michael Olunga","Ayub Timbe","Victor Wanyama","Patrick Matasi","Joash Onyango","Cliff Nyakeya","Kenneth Muguna","Francis Kahata","Lawrence Juma","David Owino","Eric Johanna"],
-  "Guatemala":["José Contreras","Rubio Rubín","Kevin Hernández","José Pinto","Marcos Figueroa","Jonathan González","Oscar Castellanos","Darwin Lom","Luis Martínez","Carlos Ruiz","Eloy Room"],
+  "México":["Guillermo Ochoa","Hirving Lozano","Santiago Giménez","Edson Álvarez","Andrés Guardado","Henry Martín","Orbelin Pineda","Roberto Alvarado","Alexis Vega","César Montes","Johan Vásquez"],
+  "Sudáfrica":["Ronwen Williams","Percy Tau","Bafana Bafana","Themba Zwane","Lyle Foster","Teboho Mokoena","Bradley Cross","Evidence Makgopa","Keagan Dolly","Sipho Mbule","Sifiso Hlanti"],
+  "Corea del Sur":["Son Heung-min","Kim Min-jae","Lee Kang-in","Hwang Hee-chan","Cho Gue-sung","Oh Hyeon-gyu","Seung-ho Paik","Kim Young-gwon","Hwang In-beom","Kim Jin-su","Lee Jae-sung"],
+  "Chequia":["Tomáš Souček","Patrik Schick","Vladimír Coufal","Jiří Pavlenka","Ondřej Kolář","Lukáš Masopust","Jakub Jankto","Matěj Vydra","Ladislav Krejčí","David Zima","Tomáš Holeš"],
+  "Canadá":["Alphonso Davies","Jonathan David","Cyle Larin","Milan Borjan","Atiba Hutchinson","Stephen Eustáquio","Tajon Buchanan","Jonathan Osorio","Mark-Anthony Kaye","Richie Laryea","Derek Cornelius"],
+  "Bosnia y Herzegovina":["Edin Džeko","Miralem Pjanić","Asmir Begović","Rade Krunic","Sead Kolašinac","Ermedin Demirović","Armin Hodžić","Dženan Radončić","Haris Duljevic","Deni Jurić","Dario Špaić"],
+  "Qatar":["Akram Afif","Almoez Ali","Saad Al Sheeb","Hassan Al-Haydos","Boualem Khoukhi","Karim Boudiaf","Pedro Miguel","Bassam Al-Rawi","Abdulaziz Hatem","Homam Al-Amin","Abdullah Al-Ahrak"],
+  "Suiza":["Xherdan Shaqiri","Granit Xhaka","Manuel Akanji","Breel Embolo","Yann Sommer","Remo Freuler","Ricardo Rodríguez","Denis Zakaria","Haris Seferović","Fabian Schär","Ruben Vargas"],
+  "Brasil":["Vinicius Jr.","Rodrygo","Casemiro","Alisson Becker","Marquinhos","Endrick","Raphinha","Lucas Paquetá","Gabriel Martinelli","Éder Militão","Danilo"],
+  "Alemania":["Manuel Neuer","Jamal Musiala","Kai Havertz","Florian Wirtz","Joshua Kimmich","Leroy Sané","Antonio Rüdiger","İlkay Gündoğan","Niclas Füllkrug","Benjamin Henrichs","Thomas Müller"],
+  "Curazao":["Cuco Martina","Jurickson Profar","Leandro Bacuna","Eloy Room","Giliano Wijnaldum","Riechedly Bazoer","Gevero Markiet","Denzell Dumfries","Myron Boadu","Darryl Lachman","Rangelo Janga"],
+  "Costa de Marfil":["Didier Drogba Jr.","Nicolas Pépé","Wilfried Zaha","Sébastien Haller","Franck Kessié","Jean-Michaël Seri","Serge Aurier","Eric Bailly","Youssouf Koné","Abdallah Sima","Simon Adingra"],
+  "Estados Unidos":["Christian Pulisic","Tyler Adams","Weston McKennie","Gio Reyna","Zack Steffen","Miles Robinson","Yunus Musah","Brenden Aaronson","Ricardo Pepi","Sergiño Dest","Matt Turner"],
+  "Australia":["Mathew Ryan","Mathew Leckie","Martin Boyle","Jackson Irvine","Harry Souttar","Riley McGree","Awer Mabil","Mitchell Duke","Ajdin Hrustic","Aziz Behich","Craig Goodwin"],
+  "Paraguay":["Alonso Solari","Gustavo Gómez","José Calderón","Antolín Alcaraz","Iván Torres","Braian Samudio","Ángel Cardozo","Damián Bobadilla","Alejandro Romero","Carlos González","Néstor Camacho"],
+  "Turquía":["Hakan Çalhanoğlu","Arda Güler","Kenan Yıldız","Altay Bayındır","Çağlar Söyüncü","Merih Demiral","Zeki Çelik","Orkun Kökçü","Barış Alper Yılmaz","Kerem Aktürkoğlu","Ferdi Kadıoğlu"],
+  "Países Bajos":["Virgil van Dijk","Frenkie de Jong","Cody Gakpo","Xavi Simons","Wout Weghorst","Jurriën Timber","Denzel Dumfries","Ryan Gravenberch","Nathan Aké","Donyell Malen","Steven Bergwijn"],
+  "Japón":["Takumi Minamino","Wataru Endo","Daichi Kamada","Shuichi Gonda","Takehiro Tomiyasu","Ko Itakura","Ritsu Doan","Ao Tanaka","Kaoru Mitoma","Junya Ito","Yukinari Sugawara"],
+  "Suecia":["Zlatan Ibrahimović","Alexander Isak","Victor Nilsson Lindelöf","Robin Olsen","Ludwig Augustinsson","Dejan Kulusevski","Emil Forsberg","Karl-Johan Johnsson","Pontus Jansson","Marcus Danielson","Sebastian Larsson"],
+  "Túnez":["Youssef Msakni","Wahbi Khazri","Ellyes Skhiri","Aymen Dahmen","Montassar Talbi","Dylan Bronn","Mohamed Drager","Naim Sliti","Bassem Srarfi","Ali Maaloul","Hannibal Mejbri"],
+  "Bélgica":["Kevin De Bruyne","Romelu Lukaku","Thibaut Courtois","Eden Hazard","Jan Vertonghen","Yannick Carrasco","Leandro Trossard","Charles De Ketelaere","Loïs Openda","Axel Witsel","Amadou Onana"],
   "Nueva Zelanda":["Chris Wood","Ryan Thomas","Liberato Cacace","Stefan Marinovic","Winston Reid","Sander van Hoeven","Oli Sail","Kosta Barbarouses","Marco Rojas","Matthew Ridenton","Dane Ingham"],
-  "Panamá":["Rolando Blackburn","Roderick Miller","Anibal Godoy","Fidel Escobar","Abdiel Arroyo","Édgar Bárcenas","José Fajardo","Adalberto Carrasquilla","Alberto Quintero","Valentín Pimentel","Harold Cummings"],
+  "Irán":["Mehdi Taremi","Alireza Beiranvand","Sardar Azmoun","Saman Ghoddos","Milad Mohammadi","Majid Hosseini","Ali Gholizadeh","Ehsan Hajsafi","Morteza Pouraliganji","Ramin Rezaeian","Karim Ansarifard"],
+  "Egipto":["Mohamed Salah","Ahmed Hegazi","Mohamed El-Shenawy","Omar Marmoush","Trézéguet","Amr El-Sulaya","Mahmoud Trezeguet","Zizo","Mostafa Mohamed","Hamdi Fathi","Karim El-Ahmadi"],
+  "Escocia":["Andrew Robertson","Scott McTominay","Lyndon Dykes","Angus Gunn","Grant Hanley","Ryan Christie","John McGinn","Stuart Armstrong","Callum McGregor","Kenny McLean","Ryan Jack"],
+  "Marruecos":["Hakim Ziyech","Achraf Hakimi","Yassine Bounou","Sofiane Boufal","Azzedine Ounahi","Youssef En-Nesyri","Noussair Mazraoui","Walid Cheddira","Selim Amallah","Romain Saïss","Nayef Aguerd"],
+  "Haití":["Duckens Nazon","Frantzdy Pierrot","Steeven Saba","Mechack Jérôme","Kervens Belfort","Wilde-Donald Guerrier","Mickael Cantave","Bernadin Coriolan","James Cantave","Carlo Marcelin","James Léandre"],
+  "Senegal":["Sadio Mané","Kalidou Koulibaly","Edouard Mendy","Ismaila Sarr","Idrissa Gueye","Boulaye Dia","Nicolas Jackson","Lamine Camara","Nampalys Mendy","Cheikhou Kouyaté","Pape Gueye"],
+  "España":["Pedri","Lamine Yamal","Álvaro Morata","Unai Simón","Dani Carvajal","Rodri","Nico Williams","Mikel Merino","Gavi","Fabián Ruiz","Joselu"],
+  "Cabo Verde":["Ryan Mendes","Garry Rodrigues","Stopira","Patrick Andrade","Jamiro Monteiro","Lisandro Semedo","Kevin Pina","Marco Soares","Diney","Ady Tavares","Steven Fortes"],
+  "Arabia Saudita":["Salem Al-Dawsari","Mohammed Al-Owais","Saleh Al-Shehri","Ali Al-Bulayhi","Sami Al-Najei","Firas Al-Buraikan","Hassan Al-Tambakti","Mohammed Kanno","Riyadh Sharahili","Abdulelah Al-Malki","Sultan Al-Ghannam"],
+  "Uruguay":["Federico Valverde","Darwin Núñez","José María Giménez","Sergio Rochet","Ronald Araújo","Rodrigo Bentancur","Facundo Pellistri","Luis Suárez","Maximiliano Gómez","Matías Vecino","Edinson Cavani"],
+  "Francia":["Kylian Mbappé","Antoine Griezmann","Olivier Giroud","Theo Hernández","Mike Maignan","Eduardo Camavinga","Aurélien Tchouaméni","Marcus Thuram","Ousmane Dembélé","Adrien Rabiot","William Saliba"],
+  "Irak":["Aymen Hussein","Amjed Attwan","Bashar Resan","Jalal Hassan","Ali Adnan","Mohanad Ali","Justin Meram","Saad Abdul-Amir","Humam Tariq","Alaa Abbas","Salam Shakir"],
+  "Noruega":["Erling Haaland","Martin Ødegaard","Alexander Sørloth","Ørjan Nyland","Stefan Strandberg","Kristian Thorstvedt","Sander Berge","Mohamed Elyounoussi","Mats Møller Dæhli","Leo Skiri Østigård","Andreas Hanche-Olsen"],
+  "Argentina":["Lionel Messi","Lautaro Martínez","Rodrigo De Paul","Emiliano Martínez","Nicolás Otamendi","Alexis Mac Allister","Julián Álvarez","Ángel Di María","Paulo Dybala","Leandro Paredes","Nahuel Molina"],
+  "Argelia":["Riyad Mahrez","Islam Slimani","Ismaël Bennacer","Raïs M'Bolhi","Aïssa Mandi","Adam Ounas","Sofiane Feghouli","Said Benrahma","Haris Belkebla","Djamel Benlamri","Youcef Atal"],
+  "Austria":["David Alaba","Marcel Sabitzer","Marko Arnautović","Patrick Pentz","Stefan Lainer","Florian Grillitsch","Konrad Laimer","Christoph Baumgartner","Xaver Schlager","Andreas Weimann","Sasa Kalajdzic"],
+  "Jordania":["Musa Al-Taamari","Yazan Al-Naimat","Zaid Al-Bawab","Amer Shafi","Baha'a Faisal","Hamza Al-Dardour","Nour Al-Rawabdeh","Ahmad Harman","Abdallah Nasib","Mahmoud Alkharabsheh","Oday Dabbagh"],
+  "Portugal":["Cristiano Ronaldo","Bruno Fernandes","Rúben Dias","Rafael Leão","Bernardo Silva","Diogo Costa","Vitinha","Pedro Neto","Diogo Jota","João Cancelo","Otávio"],
+  "RD del Congo":["Yoane Wissa","Fiston Mayele","Chancel Mbemba","Hervé Koffi","Cédric Bakambu","Silas","Arthur Masuaku","Christian Luyindama","Théo Bongonda","Samuel Moutoussamy","Gaël Kakuta"],
+  "Uzbekistán":["Eldor Shomurodov","Jaloliddin Masharipov","Hamza Karimov","Otabek Shukurov","Jasurbek Yakhshiboev","Abdukodir Khusanov","Doston Tursunov","Laziz Azimov","Bobir Abdixoliqov","Ildar Akhmetov","Rustam Yuldashev"],
+  "Colombia":["James Rodríguez","Luis Díaz","Falcao García","David Ospina","Yerry Mina","Juan Cuadrado","Duván Zapata","Mateus Uribe","Miguel Ángel Borja","Rafael Santos Borré","Jhon Arias"],
+  "Inglaterra":["Harry Kane","Jude Bellingham","Bukayo Saka","Phil Foden","Jordan Pickford","Declan Rice","Trent Alexander-Arnold","Marcus Rashford","Jack Grealish","John Stones","Kyle Walker"],
+  "Croacia":["Luka Modrić","Mateo Kovačić","Dominik Livaković","Ivan Perišić","Marcelo Brozović","Andrej Kramarić","Bruno Petković","Joško Gvardiol","Borna Sosa","Nikola Vlašić","Dejan Lovren"],
+  "Ghana":["Thomas Partey","Mohammed Salisu","Jordan Ayew","André Ayew","Joseph Wollacott","Alexander Djiku","Kamaldeen Sulemana","Inaki Williams","Mohammed Kudus","Daniel Amartey","Osman Bukari"],
+  "Panamá":["Rolando Blackburn","Roderick Miller","Anibal Godoy","Fidel Escobar","Abdiel Arroyo","Édgar Bárcenas","José Fajardo","Adalberto Carrasquilla","Alberto Quintero","Harold Cummings","Valentín Pimentel"],
 };
 
 const ALL_PLAYERS = Object.entries(PLAYERS_BY_TEAM).flatMap(([team,players])=>players.map(p=>({name:p,team,flag:FLAGS[team]||"🏳️"})));
 const ALL_TEAMS = Object.values(GROUPS).flatMap(g=>g.teams);
 
-// All 72 group matches
+// ✅ PARTIDOS OFICIALES FASE DE GRUPOS
 const MATCHES = [
-  {id:1,group:"A",home:"México",away:"Marruecos",date:"11 Jun",time:"18:00",venue:"SoFi Stadium, LA"},
-  {id:2,group:"A",home:"Croacia",away:"Ecuador",date:"11 Jun",time:"21:00",venue:"MetLife, NY"},
-  {id:3,group:"A",home:"México",away:"Croacia",date:"15 Jun",time:"18:00",venue:"AT&T, Dallas"},
-  {id:4,group:"A",home:"Ecuador",away:"Marruecos",date:"15 Jun",time:"21:00",venue:"Levi's, SF"},
-  {id:5,group:"A",home:"Ecuador",away:"México",date:"19 Jun",time:"18:00",venue:"Azteca, CDMX"},
-  {id:6,group:"A",home:"Marruecos",away:"Croacia",date:"19 Jun",time:"18:00",venue:"BC Place, Vancouver"},
-  {id:7,group:"B",home:"España",away:"Serbia",date:"12 Jun",time:"15:00",venue:"MetLife, NY"},
-  {id:8,group:"B",home:"Turquía",away:"Senegal",date:"12 Jun",time:"18:00",venue:"Arrowhead, KC"},
-  {id:9,group:"B",home:"España",away:"Turquía",date:"16 Jun",time:"15:00",venue:"Rose Bowl, LA"},
-  {id:10,group:"B",home:"Serbia",away:"Senegal",date:"16 Jun",time:"18:00",venue:"Gillette, Boston"},
-  {id:11,group:"B",home:"España",away:"Senegal",date:"20 Jun",time:"18:00",venue:"Hard Rock, Miami"},
-  {id:12,group:"B",home:"Serbia",away:"Turquía",date:"20 Jun",time:"18:00",venue:"NRG, Houston"},
-  {id:13,group:"C",home:"Alemania",away:"Eslovenia",date:"12 Jun",time:"21:00",venue:"Levi's, SF"},
-  {id:14,group:"C",home:"Japón",away:"Costa Rica",date:"13 Jun",time:"12:00",venue:"Empower, Denver"},
-  {id:15,group:"C",home:"Alemania",away:"Japón",date:"17 Jun",time:"15:00",venue:"Lincoln Financial, Philly"},
-  {id:16,group:"C",home:"Costa Rica",away:"Eslovenia",date:"17 Jun",time:"18:00",venue:"Akron, GDL"},
-  {id:17,group:"C",home:"Alemania",away:"Costa Rica",date:"21 Jun",time:"18:00",venue:"BC Place, Vancouver"},
-  {id:18,group:"C",home:"Eslovenia",away:"Japón",date:"21 Jun",time:"18:00",venue:"SoFi, LA"},
-  {id:19,group:"D",home:"Portugal",away:"Italia",date:"13 Jun",time:"15:00",venue:"Hard Rock, Miami"},
-  {id:20,group:"D",home:"Uruguay",away:"Arabia Saudita",date:"13 Jun",time:"18:00",venue:"AT&T, Dallas"},
-  {id:21,group:"D",home:"Portugal",away:"Uruguay",date:"17 Jun",time:"21:00",venue:"MetLife, NY"},
-  {id:22,group:"D",home:"Arabia Saudita",away:"Italia",date:"18 Jun",time:"12:00",venue:"Arrowhead, KC"},
-  {id:23,group:"D",home:"Portugal",away:"Arabia Saudita",date:"22 Jun",time:"18:00",venue:"Rose Bowl, LA"},
-  {id:24,group:"D",home:"Italia",away:"Uruguay",date:"22 Jun",time:"18:00",venue:"NRG, Houston"},
-  {id:25,group:"E",home:"Francia",away:"Nigeria",date:"13 Jun",time:"21:00",venue:"Levi's, SF"},
-  {id:26,group:"E",home:"Polonia",away:"Australia",date:"14 Jun",time:"15:00",venue:"Empower, Denver"},
-  {id:27,group:"E",home:"Francia",away:"Polonia",date:"18 Jun",time:"15:00",venue:"MetLife, NY"},
-  {id:28,group:"E",home:"Australia",away:"Nigeria",date:"18 Jun",time:"18:00",venue:"AT&T, Dallas"},
-  {id:29,group:"E",home:"Francia",away:"Australia",date:"22 Jun",time:"18:00",venue:"Hard Rock, Miami"},
-  {id:30,group:"E",home:"Nigeria",away:"Polonia",date:"22 Jun",time:"18:00",venue:"SoFi, LA"},
-  {id:31,group:"F",home:"Argentina",away:"Chile",date:"14 Jun",time:"18:00",venue:"AT&T, Dallas"},
-  {id:32,group:"F",home:"Eslovaquia",away:"China",date:"14 Jun",time:"21:00",venue:"Rose Bowl, LA"},
-  {id:33,group:"F",home:"Argentina",away:"Eslovaquia",date:"18 Jun",time:"21:00",venue:"Levi's, SF"},
-  {id:34,group:"F",home:"China",away:"Chile",date:"19 Jun",time:"12:00",venue:"Arrowhead, KC"},
-  {id:35,group:"F",home:"Argentina",away:"China",date:"23 Jun",time:"18:00",venue:"MetLife, NY"},
-  {id:36,group:"F",home:"Chile",away:"Eslovaquia",date:"23 Jun",time:"18:00",venue:"NRG, Houston"},
-  {id:37,group:"G",home:"Brasil",away:"Nueva Zelanda",date:"15 Jun",time:"12:00",venue:"NRG, Houston"},
-  {id:38,group:"G",home:"Colombia",away:"Argelia",date:"15 Jun",time:"15:00",venue:"Hard Rock, Miami"},
-  {id:39,group:"G",home:"Brasil",away:"Colombia",date:"19 Jun",time:"15:00",venue:"Rose Bowl, LA"},
-  {id:40,group:"G",home:"Argelia",away:"Nueva Zelanda",date:"19 Jun",time:"18:00",venue:"BC Place, Vancouver"},
-  {id:41,group:"G",home:"Brasil",away:"Argelia",date:"23 Jun",time:"18:00",venue:"AT&T, Dallas"},
-  {id:42,group:"G",home:"Nueva Zelanda",away:"Colombia",date:"23 Jun",time:"18:00",venue:"Empower, Denver"},
-  {id:43,group:"H",home:"Inglaterra",away:"Panamá",date:"16 Jun",time:"12:00",venue:"MetLife, NY"},
-  {id:44,group:"H",home:"Países Bajos",away:"Ghana",date:"16 Jun",time:"21:00",venue:"Arrowhead, KC"},
-  {id:45,group:"H",home:"Inglaterra",away:"Países Bajos",date:"20 Jun",time:"15:00",venue:"Levi's, SF"},
-  {id:46,group:"H",home:"Ghana",away:"Panamá",date:"20 Jun",time:"18:00",venue:"Akron, GDL"},
-  {id:47,group:"H",home:"Inglaterra",away:"Ghana",date:"24 Jun",time:"18:00",venue:"Hard Rock, Miami"},
-  {id:48,group:"H",home:"Panamá",away:"Países Bajos",date:"24 Jun",time:"18:00",venue:"SoFi, LA"},
-  {id:49,group:"I",home:"Estados Unidos",away:"Venezuela",date:"17 Jun",time:"12:00",venue:"SoFi, LA"},
-  {id:50,group:"I",home:"Canadá",away:"Georgia",date:"17 Jun",time:"15:00",venue:"BC Place, Vancouver"},
-  {id:51,group:"I",home:"Estados Unidos",away:"Canadá",date:"21 Jun",time:"15:00",venue:"MetLife, NY"},
-  {id:52,group:"I",home:"Georgia",away:"Venezuela",date:"21 Jun",time:"18:00",venue:"Arrowhead, KC"},
-  {id:53,group:"I",home:"Estados Unidos",away:"Georgia",date:"25 Jun",time:"18:00",venue:"AT&T, Dallas"},
-  {id:54,group:"I",home:"Venezuela",away:"Canadá",date:"25 Jun",time:"18:00",venue:"Empower, Denver"},
-  {id:55,group:"J",home:"Bélgica",away:"Tanzania",date:"18 Jun",time:"15:00",venue:"AT&T, Dallas"},
-  {id:56,group:"J",home:"Suiza",away:"Camerún",date:"18 Jun",time:"18:00",venue:"NRG, Houston"},
-  {id:57,group:"J",home:"Bélgica",away:"Suiza",date:"22 Jun",time:"15:00",venue:"Rose Bowl, LA"},
-  {id:58,group:"J",home:"Camerún",away:"Tanzania",date:"22 Jun",time:"18:00",venue:"Lincoln Financial, Philly"},
-  {id:59,group:"J",home:"Bélgica",away:"Camerún",date:"26 Jun",time:"18:00",venue:"Hard Rock, Miami"},
-  {id:60,group:"J",home:"Tanzania",away:"Suiza",date:"26 Jun",time:"18:00",venue:"BC Place, Vancouver"},
-  {id:61,group:"K",home:"Corea del Sur",away:"Kenia",date:"19 Jun",time:"12:00",venue:"Levi's, SF"},
-  {id:62,group:"K",home:"Irán",away:"Guatemala",date:"19 Jun",time:"15:00",venue:"Empower, Denver"},
-  {id:63,group:"K",home:"Corea del Sur",away:"Irán",date:"23 Jun",time:"15:00",venue:"MetLife, NY"},
-  {id:64,group:"K",home:"Guatemala",away:"Kenia",date:"23 Jun",time:"18:00",venue:"Arrowhead, KC"},
-  {id:65,group:"K",home:"Corea del Sur",away:"Guatemala",date:"27 Jun",time:"18:00",venue:"NRG, Houston"},
-  {id:66,group:"K",home:"Kenia",away:"Irán",date:"27 Jun",time:"18:00",venue:"AT&T, Dallas"},
-  {id:67,group:"L",home:"Perú",away:"Bosnia",date:"19 Jun",time:"18:00",venue:"Hard Rock, Miami"},
-  {id:68,group:"L",home:"República Checa",away:"Indonesia",date:"20 Jun",time:"12:00",venue:"SoFi, LA"},
-  {id:69,group:"L",home:"Perú",away:"República Checa",date:"24 Jun",time:"15:00",venue:"BC Place, Vancouver"},
-  {id:70,group:"L",home:"Indonesia",away:"Bosnia",date:"24 Jun",time:"18:00",venue:"Levi's, SF"},
-  {id:71,group:"L",home:"Perú",away:"Indonesia",date:"28 Jun",time:"18:00",venue:"Empower, Denver"},
-  {id:72,group:"L",home:"Bosnia",away:"República Checa",date:"28 Jun",time:"18:00",venue:"Rose Bowl, LA"},
+  // GRUPO A
+  {id:1,group:"A",home:"México",away:"Sudáfrica",date:"11 Jun",time:"15:00",venue:"Estadio Azteca, CDMX"},
+  {id:2,group:"A",home:"Corea del Sur",away:"Chequia",date:"11 Jun",time:"22:00",venue:"Estadio Akron, GDL"},
+  {id:3,group:"A",home:"México",away:"Corea del Sur",date:"18 Jun",time:"21:00",venue:"Estadio Akron, GDL"},
+  {id:4,group:"A",home:"Chequia",away:"Sudáfrica",date:"18 Jun",time:"12:00",venue:"Mercedes-Benz, Atlanta"},
+  {id:5,group:"A",home:"Chequia",away:"México",date:"24 Jun",time:"21:00",venue:"Estadio Azteca, CDMX"},
+  {id:6,group:"A",home:"Sudáfrica",away:"Corea del Sur",date:"24 Jun",time:"21:00",venue:"Estadio BBVA, Monterrey"},
+  // GRUPO B
+  {id:7,group:"B",home:"Canadá",away:"Bosnia y Herzegovina",date:"12 Jun",time:"18:00",venue:"BMO Field, Toronto"},
+  {id:8,group:"B",home:"Qatar",away:"Suiza",date:"12 Jun",time:"21:00",venue:"BC Place, Vancouver"},
+  {id:9,group:"B",home:"Canadá",away:"Qatar",date:"19 Jun",time:"18:00",venue:"BMO Field, Toronto"},
+  {id:10,group:"B",home:"Suiza",away:"Bosnia y Herzegovina",date:"19 Jun",time:"21:00",venue:"Levi's Stadium, SF"},
+  {id:11,group:"B",home:"Suiza",away:"Canadá",date:"25 Jun",time:"18:00",venue:"BC Place, Vancouver"},
+  {id:12,group:"B",home:"Bosnia y Herzegovina",away:"Qatar",date:"25 Jun",time:"18:00",venue:"Levi's Stadium, SF"},
+  // GRUPO C
+  {id:13,group:"C",home:"Brasil",away:"Alemania",date:"12 Jun",time:"15:00",venue:"SoFi Stadium, LA"},
+  {id:14,group:"C",home:"Curazao",away:"Costa de Marfil",date:"12 Jun",time:"21:00",venue:"NRG Stadium, Houston"},
+  {id:15,group:"C",home:"Alemania",away:"Curazao",date:"14 Jun",time:"13:00",venue:"NRG Stadium, Houston"},
+  {id:16,group:"C",home:"Costa de Marfil",away:"Brasil",date:"14 Jun",time:"19:00",venue:"Lincoln Financial, Philly"},
+  {id:17,group:"C",home:"Ecuador",away:"Alemania",date:"25 Jun",time:"16:00",venue:"MetLife, NY"},
+  {id:18,group:"C",home:"Curazao",away:"Costa de Marfil",date:"25 Jun",time:"16:00",venue:"Lincoln Financial, Philly"},
+  // GRUPO D
+  {id:19,group:"D",home:"Estados Unidos",away:"Paraguay",date:"12 Jun",time:"19:00",venue:"SoFi Stadium, LA"},
+  {id:20,group:"D",home:"Australia",away:"Turquía",date:"13 Jun",time:"16:00",venue:"AT&T Stadium, Dallas"},
+  {id:21,group:"D",home:"Estados Unidos",away:"Australia",date:"19 Jun",time:"19:00",venue:"SoFi Stadium, LA"},
+  {id:22,group:"D",home:"Turquía",away:"Paraguay",date:"20 Jun",time:"16:00",venue:"Arrowhead, KC"},
+  {id:23,group:"D",home:"Turquía",away:"Estados Unidos",date:"26 Jun",time:"20:00",venue:"AT&T Stadium, Dallas"},
+  {id:24,group:"D",home:"Paraguay",away:"Australia",date:"26 Jun",time:"20:00",venue:"Arrowhead, KC"},
+  // GRUPO E
+  {id:25,group:"E",home:"Países Bajos",away:"Japón",date:"14 Jun",time:"16:00",venue:"AT&T Stadium, Dallas"},
+  {id:26,group:"E",home:"Suecia",away:"Túnez",date:"14 Jun",time:"22:00",venue:"Estadio BBVA, Monterrey"},
+  {id:27,group:"E",home:"Países Bajos",away:"Suecia",date:"20 Jun",time:"13:00",venue:"NRG Stadium, Houston"},
+  {id:28,group:"E",home:"Túnez",away:"Japón",date:"20 Jun",time:"22:00",venue:"Estadio Akron, GDL"},
+  {id:29,group:"E",home:"Japón",away:"Suecia",date:"25 Jun",time:"19:00",venue:"AT&T Stadium, Dallas"},
+  {id:30,group:"E",home:"Túnez",away:"Países Bajos",date:"25 Jun",time:"19:00",venue:"Arrowhead, KC"},
+  // GRUPO F
+  {id:31,group:"F",home:"Bélgica",away:"Egipto",date:"15 Jun",time:"15:00",venue:"Lumen Field, Seattle"},
+  {id:32,group:"F",home:"Irán",away:"Nueva Zelanda",date:"15 Jun",time:"21:00",venue:"SoFi Stadium, LA"},
+  {id:33,group:"F",home:"Bélgica",away:"Irán",date:"21 Jun",time:"15:00",venue:"SoFi Stadium, LA"},
+  {id:34,group:"F",home:"Nueva Zelanda",away:"Egipto",date:"21 Jun",time:"21:00",venue:"BC Place, Vancouver"},
+  {id:35,group:"F",home:"Egipto",away:"Irán",date:"26 Jun",time:"23:00",venue:"Lumen Field, Seattle"},
+  {id:36,group:"F",home:"Nueva Zelanda",away:"Bélgica",date:"26 Jun",time:"23:00",venue:"BC Place, Vancouver"},
+  // GRUPO G
+  {id:37,group:"G",home:"Escocia",away:"Marruecos",date:"15 Jun",time:"18:00",venue:"Hard Rock, Miami"},
+  {id:38,group:"G",home:"Haití",away:"Senegal",date:"15 Jun",time:"22:00",venue:"Mercedes-Benz, Atlanta"},
+  {id:39,group:"G",home:"Escocia",away:"Haití",date:"21 Jun",time:"18:00",venue:"Hard Rock, Miami"},
+  {id:40,group:"G",home:"Marruecos",away:"Senegal",date:"21 Jun",time:"22:00",venue:"Mercedes-Benz, Atlanta"},
+  {id:41,group:"G",home:"Senegal",away:"Escocia",date:"26 Jun",time:"20:00",venue:"Hard Rock, Miami"},
+  {id:42,group:"G",home:"Marruecos",away:"Haití",date:"26 Jun",time:"20:00",venue:"Mercedes-Benz, Atlanta"},
+  // GRUPO H
+  {id:43,group:"H",home:"España",away:"Cabo Verde",date:"15 Jun",time:"12:00",venue:"Mercedes-Benz, Atlanta"},
+  {id:44,group:"H",home:"Arabia Saudita",away:"Uruguay",date:"15 Jun",time:"18:00",venue:"Hard Rock, Miami"},
+  {id:45,group:"H",home:"España",away:"Arabia Saudita",date:"21 Jun",time:"12:00",venue:"Mercedes-Benz, Atlanta"},
+  {id:46,group:"H",home:"Uruguay",away:"Cabo Verde",date:"21 Jun",time:"18:00",venue:"Hard Rock, Miami"},
+  {id:47,group:"H",home:"Cabo Verde",away:"Arabia Saudita",date:"26 Jun",time:"20:00",venue:"NRG Stadium, Houston"},
+  {id:48,group:"H",home:"Uruguay",away:"España",date:"26 Jun",time:"20:00",venue:"Estadio Akron, GDL"},
+  // GRUPO I
+  {id:49,group:"I",home:"Francia",away:"Irak",date:"16 Jun",time:"16:00",venue:"MetLife, NY"},
+  {id:50,group:"I",home:"Senegal",away:"Noruega",date:"16 Jun",time:"22:00",venue:"Gillette, Boston"},
+  {id:51,group:"I",home:"Francia",away:"Senegal",date:"22 Jun",time:"16:00",venue:"MetLife, NY"},
+  {id:52,group:"I",home:"Noruega",away:"Irak",date:"22 Jun",time:"22:00",venue:"Lincoln Financial, Philly"},
+  {id:53,group:"I",home:"Irak",away:"Senegal",date:"27 Jun",time:"20:00",venue:"Hard Rock, Miami"},
+  {id:54,group:"I",home:"Noruega",away:"Francia",date:"27 Jun",time:"20:00",venue:"MetLife, NY"},
+  // GRUPO J
+  {id:55,group:"J",home:"Argentina",away:"Argelia",date:"16 Jun",time:"22:00",venue:"Levi's Stadium, SF"},
+  {id:56,group:"J",home:"Austria",away:"Jordania",date:"17 Jun",time:"00:00",venue:"BC Place, Vancouver"},
+  {id:57,group:"J",home:"Argentina",away:"Austria",date:"23 Jun",time:"22:00",venue:"AT&T Stadium, Dallas"},
+  {id:58,group:"J",home:"Jordania",away:"Argelia",date:"23 Jun",time:"22:00",venue:"Levi's Stadium, SF"},
+  {id:59,group:"J",home:"Argelia",away:"Austria",date:"27 Jun",time:"20:00",venue:"AT&T Stadium, Dallas"},
+  {id:60,group:"J",home:"Jordania",away:"Argentina",date:"27 Jun",time:"20:00",venue:"Levi's Stadium, SF"},
+  // GRUPO K
+  {id:61,group:"K",home:"Portugal",away:"RD del Congo",date:"17 Jun",time:"13:00",venue:"NRG Stadium, Houston"},
+  {id:62,group:"K",home:"Uzbekistán",away:"Colombia",date:"17 Jun",time:"20:00",venue:"Estadio Azteca, CDMX"},
+  {id:63,group:"K",home:"Portugal",away:"Uzbekistán",date:"23 Jun",time:"13:00",venue:"NRG Stadium, Houston"},
+  {id:64,group:"K",home:"Colombia",away:"RD del Congo",date:"23 Jun",time:"20:00",venue:"Estadio Azteca, CDMX"},
+  {id:65,group:"K",home:"RD del Congo",away:"Uzbekistán",date:"28 Jun",time:"20:00",venue:"NRG Stadium, Houston"},
+  {id:66,group:"K",home:"Colombia",away:"Portugal",date:"28 Jun",time:"20:00",venue:"Estadio Azteca, CDMX"},
+  // GRUPO L
+  {id:67,group:"L",home:"Inglaterra",away:"Croacia",date:"17 Jun",time:"16:00",venue:"AT&T Stadium, Dallas"},
+  {id:68,group:"L",home:"Ghana",away:"Panamá",date:"17 Jun",time:"22:00",venue:"Arrowhead, KC"},
+  {id:69,group:"L",home:"Inglaterra",away:"Ghana",date:"23 Jun",time:"16:00",venue:"MetLife, NY"},
+  {id:70,group:"L",home:"Panamá",away:"Croacia",date:"23 Jun",time:"22:00",venue:"Gillette, Boston"},
+  {id:71,group:"L",home:"Croacia",away:"Ghana",date:"28 Jun",time:"20:00",venue:"MetLife, NY"},
+  {id:72,group:"L",home:"Panamá",away:"Inglaterra",date:"28 Jun",time:"20:00",venue:"Lincoln Financial, Philly"},
 ];
 
-// Calculate standings from match results
 function calcStandings(groupLetter, matchResults) {
   const teams = GROUPS[groupLetter].teams;
   const stats = {};
-  teams.forEach(t => { stats[t]={pj:0,g:0,e:0,p:0,gf:0,gc:0,pts:0} });
+  teams.forEach(t=>{ stats[t]={pj:0,g:0,e:0,p:0,gf:0,gc:0,pts:0} });
   MATCHES.filter(m=>m.group===groupLetter).forEach(m=>{
     const r = matchResults[m.id];
     if(!r||r.home===""||r.away==="") return;
     const h=Number(r.home), a=Number(r.away);
     if(isNaN(h)||isNaN(a)) return;
+    if(!stats[m.home]||!stats[m.away]) return;
     stats[m.home].pj++; stats[m.away].pj++;
     stats[m.home].gf+=h; stats[m.home].gc+=a;
     stats[m.away].gf+=a; stats[m.away].gc+=h;
@@ -192,13 +205,13 @@ function calcStandings(groupLetter, matchResults) {
     .sort((a,b)=>b.pts-a.pts||b.dif-a.dif||b.gf-a.gf);
 }
 
-const SK="wc2026_v6", UK="wc2026_usr_v6";
-const loadData = ()=>{try{return JSON.parse(localStorage.getItem(SK)||"{}")}catch{return{}}};
-const saveData = d=>{try{localStorage.setItem(SK,JSON.stringify(d))}catch{}};
-const loadUser = ()=>{try{const u=JSON.parse(localStorage.getItem(UK)||"null");return u||{name:"",favTeam:"",favPlayer:"",id:Math.random().toString(36).slice(2)}}catch{return{name:"",favTeam:"",favPlayer:"",id:"u1"}}};
-const saveUser = u=>{try{localStorage.setItem(UK,JSON.stringify(u))}catch{}};
+const SK="wc2026_v7", UK="wc2026_usr_v7";
+const loadData=()=>{try{return JSON.parse(localStorage.getItem(SK)||"{}")}catch{return{}}};
+const saveData=d=>{try{localStorage.setItem(SK,JSON.stringify(d))}catch{}};
+const loadUser=()=>{try{const u=JSON.parse(localStorage.getItem(UK)||"null");return u||{name:"",favTeam:"",favPlayer:"",id:Math.random().toString(36).slice(2)}}catch{return{name:"",favTeam:"",favPlayer:"",id:"u1"}}};
+const saveUser=u=>{try{localStorage.setItem(UK,JSON.stringify(u))}catch{}};
 
-function GradBar(){return <div style={{height:4,background:`linear-gradient(90deg,${C.green},${C.blue},${C.gray},${C.green},${C.blue})`}}/>}
+function GradBar(){return <div style={{height:5,background:`linear-gradient(90deg,${C.green},${C.blue},${C.gray},${C.green},${C.blue})`}}/>}
 function Div(){return <div style={{height:4,background:`linear-gradient(90deg,${C.green},${C.blue})`,borderRadius:2,marginBottom:16}}/>}
 
 function TrophySVG({size=60}){
@@ -322,12 +335,12 @@ function SetupModal({user,setUser,onClose}){
         <div style={{padding:"28px 24px"}}>
           <div style={{display:"flex",justifyContent:"center",marginBottom:16}}><TrophySVG size={80}/></div>
           <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:30,fontWeight:900,textAlign:"center",color:C.text,letterSpacing:2,marginBottom:2}}>MUNDIAL 2026</div>
-          <div style={{fontSize:11,color:C.textM,textAlign:"center",marginBottom:24,letterSpacing:1}}>APP DE PREDICCIONES · WE ARE 26</div>
+          <div style={{fontSize:11,color:C.textM,textAlign:"center",marginBottom:24,letterSpacing:1}}>APP DE PREDICCIONES · WE ARE 26 · 48 EQUIPOS</div>
           <Lbl>TU NOMBRE</Lbl>
           <input style={S.inp} placeholder="¿Cómo te llaman?" value={name} onChange={e=>setName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&save()}/>
           <Lbl mt>TU EQUIPO FAVORITO</Lbl>
           <div style={{position:"relative"}} ref={tRef}>
-            <input style={S.inp} placeholder="Busca tu equipo..." value={team||tq} onChange={e=>{setTq(e.target.value);setTeam("");setTOpen(true)}} onFocus={()=>setTOpen(true)}/>
+            <input style={S.inp} placeholder="Busca entre los 48 equipos..." value={team||tq} onChange={e=>{setTq(e.target.value);setTeam("");setTOpen(true)}} onFocus={()=>setTOpen(true)}/>
             {tOpen&&<div style={S.drop}>{fT.slice(0,8).map((t,i)=><div key={i} className="dr" style={S.dRow} onClick={()=>{setTeam(t);setTq("");setTOpen(false)}}><span style={{fontSize:20}}>{FLAGS[t]||"🏳️"}</span><span style={{fontSize:13,fontWeight:600,color:C.text}}>{t}</span></div>)}</div>}
           </div>
           <Lbl mt>TU JUGADOR FAVORITO</Lbl>
@@ -365,7 +378,7 @@ function HomeTab({preds,updatePred,user}){
         <div style={{background:`linear-gradient(135deg,${C.greenL},${C.blueL})`,padding:"28px 24px",display:"flex",alignItems:"center",gap:20,flexWrap:"wrap"}}>
           <TrophySVG size={88}/>
           <div style={{flex:1,minWidth:180}}>
-            <div style={{fontSize:9,letterSpacing:4,color:C.gray,fontFamily:"'Barlow Condensed',sans-serif",fontWeight:700,marginBottom:4}}>FIFA WORLD CUP 2026™</div>
+            <div style={{fontSize:9,letterSpacing:4,color:C.gray,fontFamily:"'Barlow Condensed',sans-serif",fontWeight:700,marginBottom:4}}>FIFA WORLD CUP 2026™ · 48 SELECCIONES</div>
             <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:46,fontWeight:900,color:C.text,letterSpacing:2,lineHeight:.95,marginBottom:8}}>
               {user.name?<><span style={{color:C.gray}}>HOLA,</span><br/><span style={{color:C.green}}>{user.name.toUpperCase()}</span></>:<span style={{color:C.green}}>MIS PREDICCIONES</span>}
             </div>
@@ -439,36 +452,30 @@ function PredCard({cat,value,onSave}){
   );
 }
 
-// ─── CALENDAR TAB ───────────────────────────────────────────────────────────
 function CalendarTab({data,setData,showToast}){
   const [filter,setFilter]=useState("all");
   const res=data.matchResults||{};
   const grps=[...new Set(MATCHES.map(m=>m.group))];
   const shown=filter==="all"?MATCHES:MATCHES.filter(m=>m.group===filter);
-  const setR=(id,h,a)=>{
-    setData(d=>({...d,matchResults:{...(d.matchResults||{}),[id]:{home:h,away:a}}}));
-    showToast("⚽ ¡Resultado guardado!");
-  };
+  const setR=(id,h,a)=>{setData(d=>({...d,matchResults:{...(d.matchResults||{}),[id]:{home:h,away:a}}}));showToast("⚽ ¡Resultado guardado!")};
   const share=()=>{
-    const lines=MATCHES.filter(m=>res[m.id]).slice(0,12).map(m=>`${FLAGS[m.home]}${m.home} ${res[m.id].home}-${res[m.id].away} ${m.away}${FLAGS[m.away]}`).join("\n");
+    const lines=MATCHES.filter(m=>res[m.id]).slice(0,12).map(m=>`${FLAGS[m.home]||""}${m.home} ${res[m.id].home}-${res[m.id].away} ${m.away}${FLAGS[m.away]||""}`).join("\n");
     navigator.clipboard?.writeText("🏆 Mis picks #Mundial2026:\n\n"+lines+"\n\n"+window.location.href);
     showToast("📋 ¡Copiado!");
   };
   return(
     <div>
-      <PH title="Calendario de Partidos" sub={`${Object.keys(res).length} de ${MATCHES.length} predichos · Los puntos se calculan automáticamente`}>
+      <PH title="Calendario de Partidos" sub={`${Object.keys(res).length} de ${MATCHES.length} predichos · Puntos automáticos`}>
         <button style={S.btnG} onClick={share}>📤 Compartir</button>
       </PH>
       <Div/>
-      {/* Points legend */}
       <div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap"}}>
-        {[{l:"Victoria",pts:"3 pts",c:C.green},{l:"Empate",pts:"1 pt",c:C.blue},{l:"Derrota",pts:"0 pts",c:C.gray}].map(x=>(
-          <div key={x.l} style={{display:"flex",alignItems:"center",gap:5,background:C.white,border:`1px solid ${C.border}`,borderRadius:7,padding:"4px 10px",fontSize:11}}>
-            <div style={{width:8,height:8,borderRadius:"50%",background:x.c}}/>
-            <span style={{color:C.textS}}>{x.l}</span>
-            <span style={{fontWeight:700,color:x.c,fontFamily:"'Barlow Condensed',sans-serif",fontSize:13}}>{x.pts}</span>
+        {[{l:"🏆 Victoria",c:C.green},{l:"🤝 Empate",pts:"1 pt",c:C.blue},{l:"❌ Derrota",pts:"0",c:C.gray}].map((x,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"center",gap:5,background:C.white,border:`1px solid ${C.border}`,borderRadius:7,padding:"4px 10px",fontSize:11,color:C.textS}}>
+            <div style={{width:7,height:7,borderRadius:"50%",background:x.c}}/>{x.l}
           </div>
         ))}
+        <div style={{marginLeft:"auto",fontSize:11,color:C.textM}}>Victoria = 3pts · Empate = 1pt · Derrota = 0pts</div>
       </div>
       <div style={{display:"flex",gap:6,marginBottom:14,flexWrap:"wrap"}}>
         {["all",...grps].map(g=>(
@@ -491,9 +498,7 @@ function MatchCard({match,result,onSave}){
         <span style={{fontSize:10,fontWeight:700,padding:"3px 9px",borderRadius:99,background:bg4(gc),color:gc,border:`1px solid ${gc}55`,letterSpacing:.5}}>GRUPO {match.group}</span>
         <span style={{fontSize:11,color:C.textM}}>📅 {match.date} · {match.time}</span>
         <span style={{fontSize:10,color:C.textM}}>📍 {match.venue}</span>
-        {saved&&(
-          <span style={{marginLeft:"auto",fontSize:10,padding:"2px 8px",borderRadius:99,background:C.greenL,color:C.greenD,fontWeight:700}}>✓ guardado</span>
-        )}
+        {saved&&<span style={{marginLeft:"auto",fontSize:10,padding:"2px 8px",borderRadius:99,background:C.greenL,color:C.greenD,fontWeight:700}}>✓ guardado</span>}
       </div>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}>
         <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
@@ -518,115 +523,97 @@ function MatchCard({match,result,onSave}){
   );
 }
 
-// ─── GROUPS TAB ─────────────────────────────────────────────────────────────
-function GroupsTab({data,setData}){
+function GroupsTab({data}){
   const res=data.matchResults||{};
   return(
     <div>
-      <PH title="Fase de Grupos" sub="Clasificación automática por puntos según tus resultados predichos"/>
+      <PH title="Fase de Grupos" sub="Puntos calculados automáticamente según tus predicciones · 3=Victoria 1=Empate 0=Derrota"/>
       <Div/>
       <div style={{background:C.blueL,border:`1px solid ${C.blue}44`,borderRadius:10,padding:"10px 14px",marginBottom:14,fontSize:12,color:C.blueD}}>
-        💡 Los puntos se calculan automáticamente. Ve a <strong>PARTIDOS</strong> y guarda tus resultados predichos para ver la tabla actualizada.
+        💡 Ve a <strong>PARTIDOS</strong>, guarda los resultados que predices y la tabla se actualiza sola con los puntos reales.
       </div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:14}}>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(310px,1fr))",gap:14}}>
         {Object.entries(GROUPS).map(([letter,{color}])=>(
-          <GroupStandingsTable key={letter} letter={letter} color={color} matchResults={res}/>
+          <GroupTable key={letter} letter={letter} color={color} matchResults={res}/>
         ))}
       </div>
     </div>
   );
 }
 
-function GroupStandingsTable({letter,color,matchResults}){
+function GroupTable({letter,color,matchResults}){
   const standings=calcStandings(letter,matchResults);
   const medals=["🥇","🥈","🥉","4️⃣"];
-  const pos_colors=["#2E7D32","#1565C0","#607D8B","#607D8B"];
   return(
     <div className="hvr" style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:12,overflow:"hidden",boxShadow:"0 1px 5px rgba(0,0,0,.05)"}}>
       <div style={{background:color,padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
         <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,fontWeight:900,color:"#fff",letterSpacing:1}}>GRUPO {letter}</span>
-        <span style={{fontSize:10,color:"rgba(255,255,255,.7)",letterSpacing:.5}}>Top 2 clasifican · Mejor 3° también</span>
+        <span style={{fontSize:10,color:"rgba(255,255,255,.7)"}}>Top 2 + mejores 3° clasifican</span>
       </div>
       <table style={{fontSize:11}}>
         <thead>
           <tr style={{background:C.bg}}>
-            <th style={{padding:"6px 10px",textAlign:"left",color:C.textM,fontWeight:700,letterSpacing:.5,width:24}}>#</th>
-            <th style={{padding:"6px 4px",textAlign:"left",color:C.textM,fontWeight:700,letterSpacing:.5}}>EQUIPO</th>
-            <th style={{padding:"6px 6px",textAlign:"center",color:C.textM,fontWeight:700,width:26}}>PJ</th>
-            <th style={{padding:"6px 6px",textAlign:"center",color:C.textM,fontWeight:700,width:26}}>G</th>
-            <th style={{padding:"6px 6px",textAlign:"center",color:C.textM,fontWeight:700,width:26}}>E</th>
-            <th style={{padding:"6px 6px",textAlign:"center",color:C.textM,fontWeight:700,width:26}}>P</th>
-            <th style={{padding:"6px 6px",textAlign:"center",color:C.textM,fontWeight:700,width:32}}>DIF</th>
-            <th style={{padding:"6px 8px",textAlign:"center",color:C.textM,fontWeight:700,width:34}}>PTS</th>
+            <th style={{padding:"6px 8px",textAlign:"left",color:C.textM,fontWeight:700,width:28}}>#</th>
+            <th style={{padding:"6px 4px",textAlign:"left",color:C.textM,fontWeight:700}}>EQUIPO</th>
+            <th style={{padding:"6px 5px",textAlign:"center",color:C.textM,fontWeight:700,width:28}}>PJ</th>
+            <th style={{padding:"6px 5px",textAlign:"center",color:C.textM,fontWeight:700,width:28}}>G</th>
+            <th style={{padding:"6px 5px",textAlign:"center",color:C.textM,fontWeight:700,width:28}}>E</th>
+            <th style={{padding:"6px 5px",textAlign:"center",color:C.textM,fontWeight:700,width:28}}>P</th>
+            <th style={{padding:"6px 5px",textAlign:"center",color:C.textM,fontWeight:700,width:34}}>DIF</th>
+            <th style={{padding:"6px 8px",textAlign:"center",color:C.textM,fontWeight:700,width:36}}>PTS</th>
           </tr>
         </thead>
         <tbody>
           {standings.map((row,i)=>(
             <tr key={row.team} style={{background:i<2?bg4(color):"transparent",borderBottom:`1px solid ${C.borderL}`}}>
-              <td style={{padding:"7px 10px",textAlign:"center"}}>
-                <span style={{fontSize:14}}>{medals[i]}</span>
-              </td>
+              <td style={{padding:"7px 8px",textAlign:"center",fontSize:15}}>{medals[i]}</td>
               <td style={{padding:"7px 4px"}}>
                 <div style={{display:"flex",alignItems:"center",gap:6}}>
                   <span style={{fontSize:17}}>{FLAGS[row.team]||"🏳️"}</span>
                   <span style={{fontSize:11,fontWeight:i<2?700:400,color:i<2?C.text:C.textS}}>{row.team}</span>
                 </div>
               </td>
-              <td style={{padding:"7px 6px",textAlign:"center",color:C.textS}}>{row.pj}</td>
-              <td style={{padding:"7px 6px",textAlign:"center",color:C.green,fontWeight:700}}>{row.g}</td>
-              <td style={{padding:"7px 6px",textAlign:"center",color:C.gray}}>{row.e}</td>
-              <td style={{padding:"7px 6px",textAlign:"center",color:"#E53935"}}>{row.p}</td>
-              <td style={{padding:"7px 6px",textAlign:"center",color:row.dif>0?C.green:row.dif<0?"#E53935":C.gray,fontWeight:700}}>{row.dif>0?"+":""}{row.dif}</td>
+              <td style={{padding:"7px 5px",textAlign:"center",color:C.textS}}>{row.pj}</td>
+              <td style={{padding:"7px 5px",textAlign:"center",color:C.green,fontWeight:700}}>{row.g}</td>
+              <td style={{padding:"7px 5px",textAlign:"center",color:C.gray}}>{row.e}</td>
+              <td style={{padding:"7px 5px",textAlign:"center",color:"#E53935"}}>{row.p}</td>
+              <td style={{padding:"7px 5px",textAlign:"center",color:row.dif>0?C.green:row.dif<0?"#E53935":C.gray,fontWeight:700}}>{row.dif>0?"+":""}{row.dif}</td>
               <td style={{padding:"7px 8px",textAlign:"center"}}>
-                <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,color:pos_colors[i]}}>{row.pts}</span>
+                <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:17,fontWeight:900,color:i<2?color:C.gray}}>{row.pts}</span>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <div style={{padding:"6px 10px",background:C.bg,fontSize:10,color:C.textM,textAlign:"center"}}>
-        🟢 clasificados automáticamente · 🏆 3° puede clasificar como mejor tercero
-      </div>
     </div>
   );
 }
 
-// ─── BRACKET TAB ─────────────────────────────────────────────────────────────
 function BracketTab({data,setData,showToast}){
   const br=data.bracket||{};
   const res=data.matchResults||{};
-
-  // Get ranked team from standings
-  const ranked=(g,pos)=>{
-    const st=calcStandings(g,res);
-    return st[pos]?.team||`${pos===0?"1°":"2°"} Gr.${g}`;
-  };
-  const g1=g=>ranked(g,0);
-  const g2=g=>ranked(g,1);
-
+  const ranked=(g,pos)=>{const st=calcStandings(g,res);return st[pos]?.team||`${pos===0?"1°":"2°"} Gr.${g}`;};
+  const g1=g=>ranked(g,0); const g2=g=>ranked(g,1);
   const pick=(id,w)=>{setData(d=>({...d,bracket:{...(d.bracket||{}),[id]:w}}));showToast(`✅ ${w} avanza!`)};
 
-  // 16 AVOS — 16 matches
   const avos=[
-    {id:"a1",home:g1("A"),away:g2("C"),label:"Partido 1"},
-    {id:"a2",home:g1("B"),away:g2("D"),label:"Partido 2"},
-    {id:"a3",home:g1("C"),away:g2("A"),label:"Partido 3"},
-    {id:"a4",home:g1("D"),away:g2("B"),label:"Partido 4"},
-    {id:"a5",home:g1("E"),away:g2("G"),label:"Partido 5"},
-    {id:"a6",home:g1("F"),away:g2("H"),label:"Partido 6"},
-    {id:"a7",home:g1("G"),away:g2("E"),label:"Partido 7"},
-    {id:"a8",home:g1("H"),away:g2("F"),label:"Partido 8"},
-    {id:"a9",home:g1("I"),away:g2("K"),label:"Partido 9"},
-    {id:"a10",home:g1("J"),away:g2("L"),label:"Partido 10"},
-    {id:"a11",home:g1("K"),away:g2("I"),label:"Partido 11"},
-    {id:"a12",home:g1("L"),away:g2("J"),label:"Partido 12"},
-    {id:"a13",home:"Mejor 3° A/B/C",away:"Mejor 3° D/E/F",label:"Partido 13"},
-    {id:"a14",home:"Mejor 3° G/H/I",away:"Mejor 3° J/K/L",label:"Partido 14"},
-    {id:"a15",home:"Mejor 3° A/C/D",away:"Mejor 3° B/E/F",label:"Partido 15"},
-    {id:"a16",home:"Mejor 3° G/I/J",away:"Mejor 3° H/K/L",label:"Partido 16"},
+    {id:"a1",home:g1("A"),away:g2("C"),label:"P1"},
+    {id:"a2",home:g1("B"),away:g2("D"),label:"P2"},
+    {id:"a3",home:g1("C"),away:g2("A"),label:"P3"},
+    {id:"a4",home:g1("D"),away:g2("B"),label:"P4"},
+    {id:"a5",home:g1("E"),away:g2("G"),label:"P5"},
+    {id:"a6",home:g1("F"),away:g2("H"),label:"P6"},
+    {id:"a7",home:g1("G"),away:g2("E"),label:"P7"},
+    {id:"a8",home:g1("H"),away:g2("F"),label:"P8"},
+    {id:"a9",home:g1("I"),away:g2("K"),label:"P9"},
+    {id:"a10",home:g1("J"),away:g2("L"),label:"P10"},
+    {id:"a11",home:g1("K"),away:g2("I"),label:"P11"},
+    {id:"a12",home:g1("L"),away:g2("J"),label:"P12"},
+    {id:"a13",home:"Mejor 3° A/B/C",away:"Mejor 3° D/E/F",label:"P13"},
+    {id:"a14",home:"Mejor 3° G/H/I",away:"Mejor 3° J/K/L",label:"P14"},
+    {id:"a15",home:"Mejor 3° A/C/D",away:"Mejor 3° B/E/F",label:"P15"},
+    {id:"a16",home:"Mejor 3° G/I/J",away:"Mejor 3° H/K/L",label:"P16"},
   ];
-
-  // OCTAVOS — 8 matches (winners of 16avos)
   const octavos=[
     {id:"o1",home:br.a1||"?",away:br.a2||"?"},
     {id:"o2",home:br.a3||"?",away:br.a4||"?"},
@@ -637,42 +624,33 @@ function BracketTab({data,setData,showToast}){
     {id:"o7",home:br.a13||"?",away:br.a14||"?"},
     {id:"o8",home:br.a15||"?",away:br.a16||"?"},
   ];
-
-  // CUARTOS — 4 matches
   const cuartos=[
     {id:"c1",home:br.o1||"?",away:br.o2||"?"},
     {id:"c2",home:br.o3||"?",away:br.o4||"?"},
     {id:"c3",home:br.o5||"?",away:br.o6||"?"},
     {id:"c4",home:br.o7||"?",away:br.o8||"?"},
   ];
-
-  // SEMIS — 2 matches
   const semis=[
     {id:"s1",home:br.c1||"?",away:br.c2||"?"},
     {id:"s2",home:br.c3||"?",away:br.c4||"?"},
   ];
-
-  // TERCER LUGAR
-  const tercero={id:"t3",home:br.s1_loser||"?",away:br.s2_loser||"?"};
-
-  // FINAL
-  const final={id:"fin",home:br.s1||"?",away:br.s2||"?"};
+  const f3={id:"t3",home:br.s1_l||"?",away:br.s2_l||"?"};
+  const fn={id:"fin",home:br.s1||"?",away:br.s2||"?"};
   const champ=br.fin||null;
 
   const rounds=[
-    {label:"16AVOS DE FINAL",icon:"⚡",color:C.blue,matches:avos,cols:2,note:"16 partidos"},
-    {label:"OCTAVOS DE FINAL",icon:"🔵",color:C.blue,matches:octavos,cols:2,note:"8 partidos"},
+    {label:"16AVOS DE FINAL",icon:"⚡",color:C.blue,matches:avos,cols:2,note:"16 partidos — Round of 32"},
+    {label:"OCTAVOS DE FINAL",icon:"🔵",color:C.blue,matches:octavos,cols:2,note:"8 partidos — Round of 16"},
     {label:"CUARTOS DE FINAL",icon:"🟢",color:C.green,matches:cuartos,cols:2,note:"4 partidos"},
     {label:"SEMIFINALES",icon:"🔶",color:C.gray,matches:semis,cols:2,note:"2 partidos"},
-    {label:"TERCER LUGAR",icon:"🥉",color:C.gray,matches:[tercero],cols:1,note:"3er y 4to puesto"},
-    {label:"GRAN FINAL",icon:"🏆",color:C.green,matches:[final],cols:1,isFinal:true,note:"El campeón"},
+    {label:"TERCER LUGAR",icon:"🥉",color:C.gray,matches:[f3],cols:1,note:"3° y 4° puesto"},
+    {label:"GRAN FINAL",icon:"🏆",color:C.green,matches:[fn],cols:1,isFinal:true,note:"El campeón"},
   ];
 
   return(
     <div>
       <PH title="Bracket del Mundial" sub="16avos → Octavos → Cuartos → Semis → Final"/>
       <Div/>
-
       {champ&&(
         <div className="champ" style={{background:C.greenL,border:`2px solid ${C.green}`,borderRadius:16,padding:20,display:"flex",alignItems:"center",justifyContent:"center",gap:16,marginBottom:20,flexWrap:"wrap"}}>
           <TrophySVG size={50}/>
@@ -684,7 +662,6 @@ function BracketTab({data,setData,showToast}){
           <TrophySVG size={50}/>
         </div>
       )}
-
       {rounds.map(r=>(
         <div key={r.label} style={{marginBottom:24}}>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
@@ -696,7 +673,7 @@ function BracketTab({data,setData,showToast}){
           <div style={{display:"grid",gridTemplateColumns:`repeat(${r.cols},1fr)`,gap:8}}>
             {r.matches.map(m=>(
               <div key={m.id} style={{background:C.white,border:`1px solid ${r.isFinal?r.color:C.border}`,borderRadius:10,padding:10,display:"flex",flexDirection:"column",gap:4,boxShadow:"0 1px 4px rgba(0,0,0,.04)"}}>
-                {m.label&&<div style={{fontSize:10,color:C.textM,fontWeight:700,marginBottom:2,letterSpacing:.5}}>{m.label}</div>}
+                {m.label&&<div style={{fontSize:10,color:C.textM,fontWeight:700,marginBottom:2}}>{m.label}</div>}
                 {[m.home,m.away].map((team,ti)=>{
                   const na=!team||team==="?"||team.startsWith("Mejor");
                   const win=br[m.id]===team;
@@ -718,7 +695,6 @@ function BracketTab({data,setData,showToast}){
   );
 }
 
-// ─── RANKING TAB ─────────────────────────────────────────────────────────────
 function RankingTab({data,user,showToast}){
   const preds=data.predictions||{};
   const filled=PRED_CATS.filter(c=>preds[c.key]).length;
@@ -726,7 +702,7 @@ function RankingTab({data,user,showToast}){
   const bracketPicks=Object.keys(data.bracket||{}).length;
   const favFlag=FLAGS[user.favTeam]||"⚽";
   const share=()=>{
-    const txt=`🏆 Mis predicciones #Mundial2026\n👤 ${user.name}${user.favTeam?`\n${favFlag} ${user.favTeam}`:""}${user.favPlayer?`\n⭐ ${user.favPlayer}`:""}\n\n📊 ${filled}/${PRED_CATS.length} categorías · ${matches} partidos predichos\n🔗 ${window.location.href}`;
+    const txt=`🏆 Mis predicciones #Mundial2026\n👤 ${user.name}${user.favTeam?`\n${favFlag} ${user.favTeam}`:""}${user.favPlayer?`\n⭐ ${user.favPlayer}`:""}\n\n📊 ${filled}/${PRED_CATS.length} categorías · ${matches} partidos\n🔗 ${window.location.href}`;
     navigator.clipboard?.writeText(txt);showToast("📋 ¡Copiado!");
   };
   return(
